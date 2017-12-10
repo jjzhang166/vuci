@@ -1,6 +1,6 @@
 # vuci
 
-> VUCI Web Interface
+> VUCI Web Interface for OpenWRT
 
 ## Build Setup
 

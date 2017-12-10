@@ -30,6 +30,11 @@ define Package/vuci-ui-base/description
  It is built using vue.js2 and element.
 endef
 
+define Build/Prepare
+	$(INSTALL_DIR) $(PKG_BUILD_DIR)
+	$(CP) ./src/. $(PKG_BUILD_DIR)
+endef
+
 define Package/vuci-ui-base/install
 	$(INSTALL_DIR) $(1)/www
 	$(CP) $(PKG_BUILD_DIR)/dist/* $(1)/www/
