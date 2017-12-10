@@ -1,5 +1,5 @@
 # vuci
-VUCI - OpenWrt Configuration Interface
+VUCI - OpenWrt Configuration Interface based on vuejs2 and element.
 
 # How to use
 Add new feed into "feeds.conf.default":
