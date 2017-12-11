@@ -22,7 +22,7 @@ define Package/vuci-ui-base
   SECTION:=vuci
   CATEGORY:=VUCI
   TITLE:=VUCI Web Interface
-  DEPENDS:=+rpcd +rpcd-mod-iwinfo +rpcd-mod-rpcsys +uhttpd +uhttpd-mod-ubus +libubox +libubus
+  DEPENDS:=+rpcd-mod-iwinfo +rpcd-mod-rpcsys +vuci-rpc-base +uhttpd +uhttpd-mod-ubus +libubox +libubus
 endef
 
 define Package/vuci-ui-base/description
