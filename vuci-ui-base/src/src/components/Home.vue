@@ -74,13 +74,29 @@ export default {
     name: 'Home'
 }
 
-Vue.axios.post('/ubus/luci2.ui.menu', {
+/* Login */
+Vue.axios.post('/ubus', {
     jsonrpc: '2.0',
-    id: 6,
+    id: 0,
     method: 'call',
-    params:['d4f6754b686524936c91a14ed3b3fef7', 'luci2.ui', 'menu', {}]
+    params:['00000000000000000000000000000000', 'session', 'login', {"username":"root","password":"zjh329"}]
 }).then((response) => {
-    console.log(response.data)
+    if (response.data.result[0] != 0) {
+        alert('Login failed');
+        return;
+    }
+
+    let ubus_rpc_session = response.data.result[1].ubus_rpc_session;
+    
+    /* Fetch menu */
+    Vue.axios.post('/ubus', {
+        jsonrpc: '2.0',
+        id: 0,
+        method: 'call',
+        params:[ubus_rpc_session, 'vuci.ui', 'menu', {}]
+    }).then((response) => {
+        console.log(response.data)
+    })
 })
 
 </script>
