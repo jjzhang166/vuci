@@ -64,18 +64,14 @@
 
 <script>
 
-import Vue from 'vue'
 import axios from 'axios'
-import VueAxios from 'vue-axios'
-
-Vue.use(VueAxios, axios)
 
 export default {
     name: 'Home'
 }
 
 /* Login */
-Vue.axios.post('/ubus', {
+axios.post('/ubus', {
     jsonrpc: '2.0',
     id: 0,
     method: 'call',
@@ -89,7 +85,7 @@ Vue.axios.post('/ubus', {
     let ubus_rpc_session = response.data.result[1].ubus_rpc_session;
     
     /* Fetch menu */
-    Vue.axios.post('/ubus', {
+    axios.post('/ubus', {
         jsonrpc: '2.0',
         id: 0,
         method: 'call',
