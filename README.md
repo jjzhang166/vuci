@@ -1,8 +1,8 @@
-# vuci
+# vuci([中文](https://github.com/zhaojh329/vuci/blob/master/README_ZH.md))
 
 ![](https://img.shields.io/badge/license-GPLV3-brightgreen.svg?style=plastic "License")
 
-VUCI - OpenWrt web user interface based on vuejs2 and element-ui.
+VUCI - OpenWrt web user interface based on [vuejs2](https://github.com/vuejs/vue) and [element-ui](https://github.com/ElemeFE/element).
 
 `Keep Watching for More Actions on This Space`
 
