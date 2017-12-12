@@ -64,35 +64,27 @@
 
 <script>
 
-import axios from 'axios'
-
 export default {
-    name: 'Home'
-}
+    name: 'Home',
+    mounted: function () {
+        let v = this;
+        let jsonrpc = this.jsonrpc;
+        jsonrpc.request('/ubus', 'call',
+          ['00000000000000000000000000000000', 'session', 'login', {"username":"root","password":"zjh329"}]
+        ).then(function(r) {
+          if (r[0] != 0) {
+              alert('Login failed');
+              return;
+          }
 
-/* Login */
-axios.post('/ubus', {
-    jsonrpc: '2.0',
-    id: 0,
-    method: 'call',
-    params:['00000000000000000000000000000000', 'session', 'login', {"username":"root","password":"zjh329"}]
-}).then((response) => {
-    if (response.data.result[0] != 0) {
-        alert('Login failed');
-        return;
+          let ubus_rpc_session = r[1].ubus_rpc_session;
+          jsonrpc.request('/ubus', 'call',
+            [ubus_rpc_session, 'vuci.ui', 'menu', {}]
+            ).then(function(r) {
+              console.log(r);
+            });
+        });
     }
-
-    let ubus_rpc_session = response.data.result[1].ubus_rpc_session;
-    
-    /* Fetch menu */
-    axios.post('/ubus', {
-        jsonrpc: '2.0',
-        id: 0,
-        method: 'call',
-        params:[ubus_rpc_session, 'vuci.ui', 'menu', {}]
-    }).then((response) => {
-        console.log(response.data)
-    })
-})
+}
 
 </script>
