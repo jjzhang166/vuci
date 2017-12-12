@@ -38,7 +38,7 @@ VUCI - OpenWrt后台管理框架，基于[vuejs2](https://github.com/vuejs/vue)�
 
 # 贡献代码
 如果你想帮助[vuci](https://github.com/zhaojh329/vuci) 变得更好，请参考
-see the [CONTRIBUTING_ZH.md](https://github.com/zhaojh329/vuci/blob/master/CONTRIBUTING_ZH.md)。
+[CONTRIBUTING_ZH.md](https://github.com/zhaojh329/vuci/blob/master/CONTRIBUTING_ZH.md)。
 
 # 技术交流
 QQ群：153530783
