@@ -7,13 +7,13 @@ import App from './App'
 import router from './router'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
-import jsonrpc from './plugins/jsonrpc'
+import session from './plugins/session'
 
 Vue.config.productionTip = false
 
 Vue.use(ElementUI)
 Vue.use(VueAxios, axios)
-Vue.use(jsonrpc)
+Vue.use(session)
 
 /* eslint-disable no-new */
 new Vue({

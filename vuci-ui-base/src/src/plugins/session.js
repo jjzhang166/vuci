@@ -15,27 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import axios from 'axios'
+import rpc from './rpc'
 
-let jsonrpc = {
-	request: function (url, method, params) {
-		return new Promise(function(resolve, reject) {
-			axios.post(url, {
-				jsonrpc: '2.0',
-				id: 0,
-				method: method,
-				params: params
-			}).then(function(r) {
-				resolve(r.data.result);
-			}).catch(function(error) {
-				reject(error);
-			});
-		});
+var session = {
+	login: rpc.declare ({
+		object: 'session',
+		method: 'login',
+		params: ['username', 'password'],
+		expect: {'': { }}
+	}),
+
+	set_sid: function (sid) {
+		rpc.sid = sid;
 	}
 }
 
 export default {
 	install(Vue) {
-		Vue.prototype.jsonrpc = jsonrpc;
+		Vue.prototype.session = session;
 	}
 }

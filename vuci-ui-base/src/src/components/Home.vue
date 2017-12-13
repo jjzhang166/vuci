@@ -67,22 +67,11 @@
 export default {
     name: 'Home',
     mounted: function () {
-        let v = this;
-        let jsonrpc = this.jsonrpc;
-        jsonrpc.request('/ubus', 'call',
-          ['00000000000000000000000000000000', 'session', 'login', {"username":"root","password":"zjh329"}]
-        ).then(function(r) {
-          if (r[0] != 0) {
-              alert('Login failed');
-              return;
-          }
+        var session = this.session;
 
-          let ubus_rpc_session = r[1].ubus_rpc_session;
-          jsonrpc.request('/ubus', 'call',
-            [ubus_rpc_session, 'vuci.ui', 'menu', {}]
-            ).then(function(r) {
-              console.log(r);
-            });
+        session.login('root', 'snqu@2015').then(function(r) {
+          console.log('Login OK');
+          session.set_sid(r.ubus_rpc_session);
         });
     }
 }
