@@ -65,15 +65,7 @@
 <script>
 
 export default {
-    name: 'Home',
-    mounted: function () {
-        var session = this.session;
-
-        session.login('root', 'snqu@2015').then(function(r) {
-          console.log('Login OK');
-          session.set_sid(r.ubus_rpc_session);
-        });
-    }
+    name: 'Home'
 }
 
 </script>

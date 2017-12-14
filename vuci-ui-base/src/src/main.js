@@ -7,17 +7,23 @@ import App from './App'
 import router from './router'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
-import session from './plugins/session'
 
 Vue.config.productionTip = false
 
 Vue.use(ElementUI)
 Vue.use(VueAxios, axios)
-Vue.use(session)
+
+router.beforeEach((to, from, next) => {
+	if (to.path != '/login') {
+		next({path: '/login'})
+	} else {
+		next();
+	}
+})
 
 /* eslint-disable no-new */
 new Vue({
-  el: '#app',
-  router,
-  render: (h)=>h(App)
+	el: '#app',
+	router,
+	render: (h)=>h(App)
 })
