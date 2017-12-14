@@ -1,8 +1,8 @@
 /*
  * rpcd - UBUS RPC server
  *
- *   Copyright (C) 2013-2015 Jo-Philipp Wich <jow@openwrt.org>
- *   Copyright (C) 2017 Jianhui Zhao <jianhuizhao329@gmail.com>
+ * Copyright (C) 2017 Jianhui Zhao <jianhuizhao329@gmail.com>
+ * Copyright (C) 2013-2015 Jo-Philipp Wich <jow@openwrt.org>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
