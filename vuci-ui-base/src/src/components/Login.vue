@@ -1,8 +1,8 @@
 <template>
     <Card class="login-container">
         <p slot="title">Authorization Required</p>
-        <Form :model="form" label-width="65">
-            <FormItem label="Username:">
+        <Form :model="form" :rules="ruleValidate" label-width="85">
+            <FormItem label="Username:" prop="username">
                 <Input type="text" v-model="form.username" auto-complete="off" placeholder="Enter username...">
                     <Icon type="ios-person-outline" slot="prepend"></Icon>
                 </Input>
@@ -12,8 +12,11 @@
                     <Icon type="ios-locked-outline" slot="prepend"></Icon>
                 </Input>
             </FormItem>
+            <FormItem>
+                <Button type="primary" style="width:100%;" @click="handleSubmit">Login</Button>
+            </FormItem>
         </Form>
-        <Button type="primary" style="width:100%;" @click="handleSubmit">Login</Button>
+        
     </Card>
 </template>
 
@@ -25,6 +28,11 @@
                 form: {
                     username: '',
                     password: ''
+                },
+                ruleValidate: {
+                    username: [
+                        {required: true, message: 'The username cannot be empty', trigger: 'blur'}
+                    ]
                 }
             }
         },
