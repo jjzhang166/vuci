@@ -1,7 +1,7 @@
 <template>
     <Card class="login-container">
         <p slot="title">Authorization Required</p>
-        <Form :model="form" :rules="ruleValidate" label-width="85">
+        <Form :model="form" :rules="ruleValidate" :label-width="85">
             <FormItem label="Username:" prop="username">
                 <Input type="text" v-model="form.username" auto-complete="off" placeholder="Enter username...">
                     <Icon type="ios-person-outline" slot="prepend"></Icon>

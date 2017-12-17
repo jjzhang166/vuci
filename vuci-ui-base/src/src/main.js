@@ -5,6 +5,7 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import iView from 'iview'
 import 'iview/dist/styles/iview.css'
+import {declare} from './plugins/ubus/rpc'
 
 Vue.config.productionTip = false
 
@@ -25,3 +26,18 @@ new Vue({
 	router,
 	render: (h)=>h(App)
 })
+
+var session = {
+	login: declare ({
+		object: 'session',
+		method: 'login',
+		params: ['username', 'password'],
+		expect: {'': { }}
+	}),
+
+	set_sid: function (sid) {
+		rpc.sid = sid;
+	}
+}
+
+session.login('root', 'zjh329')
