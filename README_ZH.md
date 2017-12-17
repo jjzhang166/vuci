@@ -4,6 +4,8 @@
 
 VUCI - OpenWrt后台管理框架，基于[vuejs2](https://github.com/vuejs/vue)和[iView](https://github.com/ElemeFE/iview/iview).
 
+# [vuejs与其它前端框架对比](https://cn.vuejs.org/v2/guide/comparison.html)
+
 `请保持关注以获取最新的项目动态`
 
 # 如何使用

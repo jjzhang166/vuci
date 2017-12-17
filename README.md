@@ -4,6 +4,8 @@
 
 VUCI - OpenWrt web user interface based on [vuejs2](https://github.com/vuejs/vue) and [iView](https://github.com/iview/iview).
 
+# [Comparison between vuejs and other frameworks](https://vuejs.org/v2/guide/comparison.html)
+
 `Keep Watching for More Actions on This Space`
 
 # How to use
