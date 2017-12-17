@@ -1,23 +1,37 @@
 <template>
-    <el-form label-position="left" ref="form" class="login-container">
-        <h3 class="title">Authorization Required</h3>
-        <el-form-item>
-            <el-input type="text" auto-complete="off" placeholder="Username"></el-input>
-        </el-form-item>
-        <el-form-item>
-            <el-input type="password" auto-complete="off" placeholder="Password"></el-input>
-        </el-form-item>
-        <el-form-item>
-            <el-button type="primary" style="width:100%;" @click.native.prevent="handleSubmit">登录</el-button>
-        </el-form-item>
-    </el-form>
+    <Card class="login-container">
+        <p slot="title">Authorization Required</p>
+        <Form :model="form" label-width="65">
+            <FormItem label="Username:">
+                <Input type="text" v-model="form.username" auto-complete="off" placeholder="Enter username...">
+                    <Icon type="ios-person-outline" slot="prepend"></Icon>
+                </Input>
+            </FormItem>
+            <FormItem label="Password:">
+                <Input type="text" v-model="form.password" auto-complete="off" placeholder="Enter password...">
+                    <Icon type="ios-locked-outline" slot="prepend"></Icon>
+                </Input>
+            </FormItem>
+        </Form>
+        <Button type="primary" style="width:100%;" @click="handleSubmit">Login</Button>
+    </Card>
 </template>
 
 <script>
     export default {
         name: 'Login',
+        data() {
+            return {
+                form: {
+                    username: '',
+                    password: ''
+                }
+            }
+        },
         methods: {
             handleSubmit() {
+                console.log(this.form.username);
+                console.log(this.form.password);
             }
         }
     }
@@ -25,12 +39,12 @@
 
 <style scoped>
     .login-container {
-        border-radius: 5px;
-        -moz-border-radius: 5px;
-        background-clip: padding-box;
-        margin: 180px auto;
-        width: 350px;
-        padding: 35px 35px 15px 35px;
-        box-shadow: 0 0 25px #cac6c6;
+        width: 400px;
+        height: 240px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-left: -200px;
+        margin-top: -120px;
     }
 </style>
