@@ -2,7 +2,7 @@
 
 ![](https://img.shields.io/badge/license-GPLV3-brightgreen.svg?style=plastic "License")
 
-VUCI - OpenWrt web user interface based on [vuejs2](https://github.com/vuejs/vue) and [element-ui](https://github.com/ElemeFE/element).
+VUCI - OpenWrt web user interface based on [vuejs2](https://github.com/vuejs/vue) and [iView](https://github.com/iview/iview).
 
 `Keep Watching for More Actions on This Space`
 

@@ -2,7 +2,7 @@
 
 ![](https://img.shields.io/badge/license-GPLV3-brightgreen.svg?style=plastic "License")
 
-VUCI - OpenWrt后台管理框架，基于[vuejs2](https://github.com/vuejs/vue)和[element-ui](https://github.com/ElemeFE/element).
+VUCI - OpenWrt后台管理框架，基于[vuejs2](https://github.com/vuejs/vue)和[iView](https://github.com/ElemeFE/iview/iview).
 
 `请保持关注以获取最新的项目动态`
 
