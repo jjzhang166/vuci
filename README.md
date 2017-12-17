@@ -4,6 +4,10 @@
 
 VUCI - OpenWrt web user interface based on [vuejs2](https://github.com/vuejs/vue) and [iView](https://github.com/iview/iview).
 
+A new web interface with a different architecture. It doesn't use Lua anymore, but use MVVM framework.It means building HTML
+pages is done on client (browser) side offloading OpenWrt device. To access any kind of system data [ubus](https://wiki.openwrt.org/doc/techref/ubus)
+is used (with the help of [uhttpd-mod-ubus](https://wiki.openwrt.org/doc/techref/ubus#access_to_ubus_over_http) to provide HTTP based API).
+
 `Keep Watching for More Actions on This Space`
 
 # [Comparison between vuejs and other frameworks](https://vuejs.org/v2/guide/comparison.html)
