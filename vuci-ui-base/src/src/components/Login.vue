@@ -40,6 +40,9 @@
             handleSubmit() {
                 console.log(this.form.username);
                 console.log(this.form.password);
+
+                this.$root.logined = true;
+                this.$router.push('/');
             }
         }
     }

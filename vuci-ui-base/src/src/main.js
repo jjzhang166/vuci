@@ -12,14 +12,6 @@ Vue.config.productionTip = false
 Vue.use(iView)
 Vue.use(VueAxios, axios)
 
-router.beforeEach((to, from, next) => {
-	if (to.path != '/login') {
-		next({path: '/login'})
-	} else {
-		next();
-	}
-})
-
 /* eslint-disable no-new */
 new Vue({
 	el: '#app',
