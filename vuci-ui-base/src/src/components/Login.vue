@@ -1,13 +1,13 @@
 <template>
     <Card class="login-container">
         <p slot="title">Authorization Required</p>
-        <Form :model="form" :rules="ruleValidate" :label-width="85">
-            <FormItem label="Username:" prop="username">
+        <Form ref="form" :model="form" :rules="ruleValidate">
+            <FormItem prop="username">
                 <Input type="text" v-model="form.username" auto-complete="off" placeholder="Enter username...">
                     <Icon type="ios-person-outline" slot="prepend"></Icon>
                 </Input>
             </FormItem>
-            <FormItem label="Password:">
+            <FormItem>
                 <Input type="text" v-model="form.password" auto-complete="off" placeholder="Enter password...">
                     <Icon type="ios-locked-outline" slot="prepend"></Icon>
                 </Input>
@@ -31,18 +31,22 @@
                 },
                 ruleValidate: {
                     username: [
-                        {required: true, message: 'The username cannot be empty', trigger: 'blur'}
+                        {required: true, trigger: 'blur'}
                     ]
                 }
             }
         },
         methods: {
             handleSubmit() {
-                console.log(this.form.username);
-                console.log(this.form.password);
-
-                this.$root.logined = true;
-                this.$router.push('/');
+                this.$refs['form'].validate((valid) => {
+                    if (valid) {
+                        let session = {username: this.form.username, id: '00000000000000000000000000000000'};
+                        sessionStorage.setItem("session", JSON.stringify(session));
+                        this.$router.push('/');
+                    } else {
+                        this.$Message.error('Fail!');
+                    }
+                });
             }
         }
     }

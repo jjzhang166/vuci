@@ -10,7 +10,19 @@ import {declare} from './plugins/ubus/rpc'
 Vue.config.productionTip = false
 
 Vue.use(iView)
-Vue.use(VueAxios, axios)
+
+router.beforeEach((to, from, next) => {
+	if (to.path == '/login') {
+		sessionStorage.removeItem('session');
+	}
+
+	let session = JSON.parse(sessionStorage.getItem('session'));
+	if (!session && to.path != '/login') {
+		next('/login')
+	} else {
+		next()
+	}
+});
 
 /* eslint-disable no-new */
 new Vue({
@@ -18,18 +30,3 @@ new Vue({
 	router,
 	render: (h)=>h(App)
 })
-
-var session = {
-	login: declare ({
-		object: 'session',
-		method: 'login',
-		params: ['username', 'password'],
-		expect: {'': { }}
-	}),
-
-	set_sid: function (sid) {
-		rpc.sid = sid;
-	}
-}
-
-session.login('root', 'zjh329')
