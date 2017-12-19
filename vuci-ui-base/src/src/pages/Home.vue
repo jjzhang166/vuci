@@ -81,7 +81,7 @@ export default {
     },
 
     beforeMount() {
-        this.$ubus.fetch_menus().then((r) => {
+        this.$ubus.fetch_menus(this).then((r) => {
             console.log(JSON.stringify(r));
             this.menus = r.childs;
         });

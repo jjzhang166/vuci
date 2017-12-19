@@ -148,7 +148,7 @@ function _toChildArray(node) {
     return node;
 }
 
-function fetch_menus() {
+function fetch_menus(v) {
 	return new Promise(function(resolve, reject) {
 		call('vuci.ui', 'menu', {}).then((r) => {
 
@@ -156,6 +156,8 @@ function fetch_menus() {
 
 			if (r && r.menu) {
 				resolve(_toChildArray(_toChildTree(r.menu)));
+			} else {
+				v.$router.push('/login');
 			}
 		});
 	});
