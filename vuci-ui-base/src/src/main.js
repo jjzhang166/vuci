@@ -1,10 +1,13 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import ubus from './plugins/ubus'
 import {Card, Form, FormItem, Input, Icon, Button, Row, Col, Menu, Submenu, MenuItem} from 'iview';
 import 'iview/dist/styles/iview.css'
 
 Vue.config.productionTip = false
+
+Vue.use(ubus);
 
 Vue.component('Card', Card);
 Vue.component('Form', Form);
@@ -23,8 +26,7 @@ router.beforeEach((to, from, next) => {
 		sessionStorage.removeItem('session');
 	}
 
-	let session = JSON.parse(sessionStorage.getItem('session'));
-	if (!session && to.path != '/login') {
+	if (!sessionStorage.getItem('session') && to.path != '/login') {
 		next('/login')
 	} else {
 		next()
@@ -36,4 +38,4 @@ new Vue({
 	el: '#app',
 	router,
 	render: (h)=>h(App)
-})
+});

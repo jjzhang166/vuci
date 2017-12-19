@@ -15,23 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import rpc from './rpc'
-
-var session = {
-	login: rpc.declare ({
-		object: 'session',
-		method: 'login',
-		params: ['username', 'password'],
-		expect: {'': { }}
-	}),
-
-	set_sid: function (sid) {
-		rpc.sid = sid;
-	}
-}
+import * as ubus from './api'
 
 export default {
-	install(Vue) {
-		Vue.prototype.session = session;
+	install: (Vue) => {
+		Vue.prototype.$ubus = ubus
 	}
 }

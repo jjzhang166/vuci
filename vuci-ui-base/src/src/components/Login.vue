@@ -8,7 +8,7 @@
                 </Input>
             </FormItem>
             <FormItem>
-                <Input type="text" v-model="form.password" auto-complete="off" placeholder="Enter password...">
+                <Input type="password" v-model="form.password" auto-complete="off" placeholder="Enter password...">
                     <Icon type="ios-locked-outline" slot="prepend"></Icon>
                 </Input>
             </FormItem>
@@ -38,13 +38,17 @@
         },
         methods: {
             handleSubmit() {
+                var v = this;
                 this.$refs['form'].validate((valid) => {
                     if (valid) {
-                        let session = {username: this.form.username, id: '00000000000000000000000000000000'};
-                        sessionStorage.setItem("session", JSON.stringify(session));
-                        this.$router.push('/');
+                        v.$ubus.login(this.form.username, this.form.password).then((r) => {
+                            if (r)
+                                v.$router.push('/');
+                        }, () => {
+                            console.log('Login Fail!');
+                        });
                     } else {
-                        this.$Message.error('Fail!');
+                        console.log('Login Fail!');
                     }
                 });
             }
