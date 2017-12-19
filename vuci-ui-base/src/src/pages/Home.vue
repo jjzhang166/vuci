@@ -2,11 +2,11 @@
     <div class="layout">
         <Row type="flex">
             <Col span="4" class="layout-menu-left">
-                <Menu theme="dark" width="auto">
+                <Menu theme="dark" width="auto" @on-select="changeMenu">
                     <div class="layout-logo-left"></div>
-                    <Submenu v-for="menu in menus" :name="menu.index" :key="menu.index">
+                    <Submenu v-for="menu in menus" :name="menu.path" :key="menu.path">
                         <template slot="title">{{menu.title}}</template>
-                        <MenuItem v-for="item in menu.childs" :name="item.index" :key="item.index">{{item.title}}</MenuItem>
+                        <MenuItem v-for="item in menu.childs" :name="item.path" :key="item.path">{{item.title}}</MenuItem>
                     </Submenu>
                 </Menu>
             </Col>
@@ -69,6 +69,12 @@ export default {
         return {
             menus: []
         };
+    },
+
+    methods: {
+        changeMenu (name) {
+            console.log('changeMenu ' + name);
+        }
     },
 
     beforeMount() {

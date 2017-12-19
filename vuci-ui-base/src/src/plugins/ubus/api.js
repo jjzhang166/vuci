@@ -107,7 +107,7 @@ function _toChildTree(menu) {
 				node.childs = {};
 
 			if (!node.childs[path[i]])
-				node.childs[path[i]] = { link: '/' + path.slice(0, i + 1).join('/') };
+				node.childs[path[i]] = {path: '/' + path.slice(0, i + 1).join('/')};
 				node = node.childs[path[i]];
 			}
 
