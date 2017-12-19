@@ -6,7 +6,7 @@
                     <div class="layout-logo-left"></div>
                     <Submenu v-for="menu in menus" :name="menu.index" :key="menu.index">
                         <template slot="title">{{menu.title}}</template>
-                        <MenuItem v-for="item in menu.childs" :name="item.index" :key="item.index">{{item.title}}}</MenuItem>
+                        <MenuItem v-for="item in menu.childs" :name="item.index" :key="item.index">{{item.title}}</MenuItem>
                     </Submenu>
                 </Menu>
             </Col>
