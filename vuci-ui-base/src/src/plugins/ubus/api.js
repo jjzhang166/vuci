@@ -45,6 +45,9 @@ function _call_cb(msg) {
 function call(object, method, params) {
 	console.log('ubus call:' + object + ' ' + method + ' ' + JSON.stringify(params));
 
+	if (sessionStorage.getItem('session'))
+		_ubus_rpc_session = sessionStorage.getItem('session');
+
 	/* store request info */
 	let req = _requests[_jsonrpc_id] = { };
 
@@ -82,4 +85,80 @@ function login(username, password) {
 	});
 }
 
-export {call, login}
+/**
+ * Returns a new transforms menu definition from the flat path like object returned by ubus vuci.ui to a tree like structure
+ * with subnodes in a 'childs' property, for further transformation to ordered array children
+ *
+ * @param menu
+ */
+function _toChildTree(menu) {
+	const root = { title: 'root', index: 0, childs: {} };
+	let node;
+
+	if (!menu) return root;
+
+	for (const key in menu) {
+		if (menu.hasOwnProperty(key)) {
+			const path = key.split(/\//);
+			node = root;
+
+			for (let i = 0; i < path.length; i++) {
+			if (!node.childs)
+				node.childs = {};
+
+			if (!node.childs[path[i]])
+				node.childs[path[i]] = { link: '/' + path.slice(0, i + 1).join('/') };
+				node = node.childs[path[i]];
+			}
+
+			Object.assign(node, menu[key]);
+			if (!node.title) node.title = node.path;
+		}
+	}
+
+	return root;
+}
+
+/**
+ * Transforms the node definition from child as objects to childs as array, mutating the original menu definition
+ * Children are sorted according the 'index' property
+ * @param node
+ */
+function _toChildArray(node) {
+    const childs = [];
+
+    if (!node.childs)
+        return node;
+
+    for (const key in node.childs) {
+        if (node.childs.hasOwnProperty(key)) {
+            _toChildArray(node.childs[key]);
+            childs.push(node.childs[key]);
+        }
+    }
+
+    childs.sort((a, b) => (a.index || 0) - (b.index || 0));
+
+    if (childs.length) {
+        node.childs = childs;
+    } else {
+        delete node.childs;
+    }
+
+    return node;
+}
+
+function fetch_menus() {
+	return new Promise(function(resolve, reject) {
+		call('vuci.ui', 'menu', {}).then((r) => {
+
+			console.log('fetch_menus:' + JSON.stringify(r));
+
+			if (r && r.menu) {
+				resolve(_toChildArray(_toChildTree(r.menu)));
+			}
+		});
+	});
+}
+
+export {call, login, fetch_menus}

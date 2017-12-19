@@ -4,22 +4,9 @@
             <Col span="4" class="layout-menu-left">
                 <Menu theme="dark" width="auto">
                     <div class="layout-logo-left"></div>
-                    <Submenu name="status">
-                        <template slot="title">Status</template>
-                        <MenuItem name="status-overview">Overview</MenuItem>
-                        <MenuItem name="status-routes">Routes</MenuItem>
-                        <MenuItem name="status-system-log">System Log</MenuItem>
-                    </Submenu>
-                    <Submenu name="system">
-                        <template slot="title">System</template>
-                        <MenuItem name="system-system">System</MenuItem>
-                        <MenuItem name="system-software">Software</MenuItem>
-                        <MenuItem name="system-startup">Startup</MenuItem>
-                    </Submenu>
-                    <Submenu name="network">
-                        <template slot="title">Interfaces</template>
-                        <MenuItem name="network-wireless">Wireless</MenuItem>
-                        <MenuItem name="network-switch">Switch</MenuItem>
+                    <Submenu v-for="menu in menus" :name="menu.index" :key="menu.index">
+                        <template slot="title">{{menu.title}}</template>
+                        <MenuItem v-for="item in menu.childs" :name="item.index" :key="item.index">{{item.title}}}</MenuItem>
                     </Submenu>
                 </Menu>
             </Col>
@@ -77,7 +64,19 @@
 <script>
 
 export default {
-    name: 'Home'
+    name: 'Home',
+    data() {
+        return {
+            menus: []
+        };
+    },
+
+    beforeMount() {
+        this.$ubus.fetch_menus().then((r) => {
+            console.log(JSON.stringify(r));
+            this.menus = r.childs;
+        });
+    }
 }
 
 </script>
