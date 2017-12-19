@@ -1,15 +1,22 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import axios from 'axios'
-import VueAxios from 'vue-axios'
-import iView from 'iview'
+import {Card, Form, FormItem, Input, Icon, Button, Row, Col, Menu, Submenu, MenuItem} from 'iview';
 import 'iview/dist/styles/iview.css'
-import {declare} from './plugins/ubus/rpc'
 
 Vue.config.productionTip = false
 
-Vue.use(iView)
+Vue.component('Card', Card);
+Vue.component('Form', Form);
+Vue.component('FormItem', FormItem);
+Vue.component('Input', Input);
+Vue.component('Icon', Icon);
+Vue.component('Button', Button);
+Vue.component('Row', Row);
+Vue.component('Col', Col);
+Vue.component('Menu', Menu);
+Vue.component('Submenu', Submenu);
+Vue.component('MenuItem', MenuItem);
 
 router.beforeEach((to, from, next) => {
 	if (to.path == '/login') {
