@@ -2,7 +2,7 @@
 
 ![](https://img.shields.io/badge/license-GPLV3-brightgreen.svg?style=plastic "License")
 
-VUCI - OpenWrt web user interface based on [vuejs2](https://github.com/vuejs/vue) and [iView](https://github.com/iview/iview).
+VUCI - Web user interface based on [vuejs2](https://github.com/vuejs/vue) and [iView](https://github.com/iview/iview) for OpenWrt.
 
 A new web interface with a different architecture. It doesn't use Lua anymore, but use MVVM framework. It means building HTML
 pages is done on client (browser) side offloading OpenWrt device. To access any kind of system data through
