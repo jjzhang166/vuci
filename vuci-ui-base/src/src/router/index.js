@@ -15,6 +15,10 @@ export default new Router({
         component: Login
     },
     {
+        path: '/404',
+        component: Notfound
+    },
+    {
         path: '/',
         component: Home,
         children: [{
@@ -24,5 +28,9 @@ export default new Router({
             path: '/status/routes',
             component: StatusRoutes
         }]
+    },
+    {
+        path: '*',
+        redirect: '/404'
     }]
 })
