@@ -13,7 +13,7 @@
             <Col span="20">
                 <div class="layout-header">Header</div>
                 <div class="layout-content">
-                    <div>Content</div>
+                    <router-view></router-view>
                 </div>
                 <div class="layout-copy">
                     2017 &copy; Jianhui Zhao
@@ -77,6 +77,7 @@ export default {
     methods: {
         changeMenu (name) {
             console.log('changeMenu ' + name);
+            this.$router.push(name);
         }
     },
 
