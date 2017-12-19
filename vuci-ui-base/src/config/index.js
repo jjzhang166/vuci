@@ -12,7 +12,7 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
         '/ubus': {
-            target: 'http://lede.lan',
+            target: 'http://openwrt.lan',
             changeOrigin: true
         }
     },

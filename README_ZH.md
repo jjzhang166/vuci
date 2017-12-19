@@ -29,12 +29,11 @@ VUCI - OpenWrt后台管理框架，基于[vuejs2](https://github.com/vuejs/vue)�
 
 
 # 如何开发和调试
-首选进入OpenWrt源码目录，然后执行如下命令：
+首先进入你的vuci-ui-base的编译目录
 
-	$ cd feeds/vuci/vuci-ui-base/src/
-	$ npm install
+	$ cd build_dir/target-mipsel_24kc_musl/vuci-ui-base/
 
-根据自己的环境修改配置：
+然后根据自己的环境修改配置。您可能需要修改 proxyTable 和 host。
 
 	vi config/index.js
 

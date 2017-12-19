@@ -29,12 +29,12 @@ Select package vuci in menuconfig and compile new image.
 
 
 # How to develop and debug
-First, enter your OpenWrt source directory, and then execute the following commands
+First, enter your build directory of the vuci-ui-base
 
-	$ cd feeds/vuci/vuci-ui-base/src/
-	$ npm install
+	$ cd build_dir/target-mipsel_24kc_musl/vuci-ui-base/
 
-Modify the configuration file according to your own environment.
+Then modify the configuration file according to your own environment.
+You may need to modify proxyTable and host.
 
 	vi config/index.js
 
