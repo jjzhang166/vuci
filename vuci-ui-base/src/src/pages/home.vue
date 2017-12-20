@@ -1,6 +1,6 @@
 <template>
     <div class="layout">
-        <Row type="flex">
+        <Row type="flex" style="height: 100%">
             <Col span="4" class="layout-menu-left">
                 <Menu theme="dark" width="auto" @on-select="changeMenu">
                     <div class="layout-logo-left"></div>
@@ -27,7 +27,9 @@
    .layout {
         border: 1px solid #d7dde4;
         background: #f5f7f9;
-        position: relative;
+        position: absolute;
+        width: 100%;
+        height: 100%;
     }
 
     .layout-logo-left {
@@ -40,16 +42,20 @@
 
     .layout-menu-left{
         background: #464c5b;
+        height: 100%;
+        overflow: scroll;
     }
 
     .layout-header {
         height: 60px;
         background: #fff;
         box-shadow: 0 1px 1px rgba(0,0,0,.1);
+        padding: 10px;
+        margin: 15px;
     }
 
     .layout-content {
-        min-height: 400px;
+        height: 100%;
         margin: 15px;
         overflow: hidden;
         background: #fff;
@@ -58,6 +64,7 @@
     }
 
     .layout-copy {
+        height: 60px;
         text-align: center;
         padding: 10px 0 20px;
         color: #9ea7b4;
