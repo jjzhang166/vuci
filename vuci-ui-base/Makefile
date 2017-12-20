@@ -36,9 +36,9 @@ define Build/Prepare
 endef
 
 define Package/vuci-ui-base/install
-	$(INSTALL_DIR) $(1)/www $(1)/usr/share
+	$(INSTALL_DIR) $(1)/www $(1)/usr
 	$(CP) $(PKG_BUILD_DIR)/dist/* $(1)/www/
-	$(CP) ./share/* $(1)/usr/share/
+	$(CP) ./files/share $(1)/usr/
 endef
 
 $(eval $(call BuildPackage,vuci-ui-base))
