@@ -43,8 +43,31 @@
                 this.$refs['form'].validate((valid) => {
                     if (valid) {
                         v.$ubus.login(this.form.username, this.form.password).then((r) => {
-                            if (r)
+                            if (r) {
+                                let menus = [
+                                    {path: '/status/overview', component: 'status-overview'},
+                                    {path: '/status/routes', component: 'status-routes'}
+                                ];
+
+                                let routes = [{
+                                    path: '/',
+                                    component: resolve => require(['@/pages/home.vue'], resolve),
+                                    children: []
+                                },
+                                {
+                                    path: '*',
+                                    redirect: '/404'
+                                }];
+
+                                menus.forEach(function(m) {
+                                    var r = {path: m.path, component: resolve => require([`@/pages/${m.component}.vue`], resolve)}
+                                    routes[0].children.push(r);
+                                });
+
+                                v.$router.addRoutes(routes);
+
                                 v.$router.push('/');
+                            }
                         }, () => {
                             console.log('Login Fail!');
                         });
