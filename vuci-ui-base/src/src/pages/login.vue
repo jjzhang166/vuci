@@ -66,6 +66,8 @@
 
                                 v.$router.addRoutes(routes);
 
+                                sessionStorage.setItem("menus", JSON.stringify(menus));
+
                                 v.$router.push('/');
                             }
                         }, () => {
