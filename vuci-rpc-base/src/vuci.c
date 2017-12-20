@@ -155,11 +155,9 @@ static const struct blobmsg_policy rpc_switch_policy[__RPC_SWITCH_MAX] = {
 };
 
 
-static int
-rpc_errno_status(void)
+static int rpc_errno_status(void)
 {
-	switch (errno)
-	{
+	switch (errno) {
 	case EACCES:
 		return UBUS_STATUS_PERMISSION_DENIED;
 
@@ -177,8 +175,7 @@ rpc_errno_status(void)
 	}
 }
 
-static void
-log_read(FILE *log, int logsize)
+static void log_read(FILE *log, int logsize)
 {
 	int len;
 	char *logbuf;
@@ -192,8 +189,7 @@ log_read(FILE *log, int logsize)
 	if (!logbuf)
 		return;
 
-	while (logsize > RPC_VUCI_MAX_LOGSIZE)
-	{
+	while (logsize > RPC_VUCI_MAX_LOGSIZE) {
 		len = logsize % RPC_VUCI_MAX_LOGSIZE;
 
 		if (len == 0)
@@ -209,8 +205,7 @@ log_read(FILE *log, int logsize)
 	blobmsg_add_string_buffer(&buf);
 }
 
-static int
-rpc_vuci_system_log(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_system_log(struct ubus_context *ctx, struct ubus_object *obj,
                      struct ubus_request_data *req, const char *method,
                      struct blob_attr *msg)
 {
@@ -228,8 +223,7 @@ rpc_vuci_system_log(struct ubus_context *ctx, struct ubus_object *obj,
 	if (!p)
 		return UBUS_STATUS_NOT_FOUND;
 
-	uci_foreach_element(&p->sections, e)
-	{
+	uci_foreach_element(&p->sections, e) {
 		s = uci_to_section(e);
 
 		if (strcmp(s->type, "system"))
@@ -243,8 +237,7 @@ rpc_vuci_system_log(struct ubus_context *ctx, struct ubus_object *obj,
 	}
 
 	if (ptr.o && ptr.o->type == UCI_TYPE_STRING &&
-	    !strcmp(ptr.o->v.string, "file"))
-	{
+	    !strcmp(ptr.o->v.string, "file")) {
 		ptr.o = NULL;
 		ptr.option = "log_file";
 		uci_lookup_ptr(cursor, &ptr, NULL, true);
@@ -258,9 +251,7 @@ rpc_vuci_system_log(struct ubus_context *ctx, struct ubus_object *obj,
 			goto fail;
 
 		logsize = st.st_size;
-	}
-	else
-	{
+	} else {
 		ptr.o = NULL;
 		ptr.option = "log_size";
 		uci_lookup_ptr(cursor, &ptr, NULL, true);
@@ -286,8 +277,7 @@ fail:
 	return rpc_errno_status();
 }
 
-static int
-rpc_vuci_system_dmesg(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_system_dmesg(struct ubus_context *ctx, struct ubus_object *obj,
                        struct ubus_request_data *req, const char *method,
                        struct blob_attr *msg)
 {
@@ -305,8 +295,7 @@ rpc_vuci_system_dmesg(struct ubus_context *ctx, struct ubus_object *obj,
 	return 0;
 }
 
-static int
-rpc_vuci_system_diskfree(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_system_diskfree(struct ubus_context *ctx, struct ubus_object *obj,
                           struct ubus_request_data *req, const char *method,
                           struct blob_attr *msg)
 {
@@ -320,8 +309,7 @@ rpc_vuci_system_diskfree(struct ubus_context *ctx, struct ubus_object *obj,
 
 	blob_buf_init(&buf, 0);
 
-	for (i = 0; i < sizeof(fslist) / sizeof(fslist[0]); i += 2)
-	{
+	for (i = 0; i < sizeof(fslist) / sizeof(fslist[0]); i += 2) {
 		if (statvfs(fslist[i], &s))
 			continue;
 
@@ -338,8 +326,7 @@ rpc_vuci_system_diskfree(struct ubus_context *ctx, struct ubus_object *obj,
 	return 0;
 }
 
-static int
-rpc_vuci_process_list(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_process_list(struct ubus_context *ctx, struct ubus_object *obj,
                        struct ubus_request_data *req, const char *method,
                        struct blob_attr *msg)
 {
@@ -354,8 +341,7 @@ rpc_vuci_process_list(struct ubus_context *ctx, struct ubus_object *obj,
 	blob_buf_init(&buf, 0);
 	c = blobmsg_open_array(&buf, "processes");
 
-	while (fgets(line, sizeof(line) - 1, top))
-	{
+	while (fgets(line, sizeof(line) - 1, top)) {
 		pid  = strtok(line, " ");
 
 		if (*pid < '0' || *pid > '9')
@@ -405,8 +391,7 @@ rpc_vuci_process_list(struct ubus_context *ctx, struct ubus_object *obj,
 	return 0;
 }
 
-static int
-rpc_vuci_process_signal(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_process_signal(struct ubus_context *ctx, struct ubus_object *obj,
                          struct ubus_request_data *req, const char *method,
                          struct blob_attr *msg)
 {
@@ -416,8 +401,7 @@ rpc_vuci_process_signal(struct ubus_context *ctx, struct ubus_object *obj,
 	blobmsg_parse(rpc_signal_policy, __RPC_S_MAX, tb,
 	              blob_data(msg), blob_len(msg));
 
-	if (!tb[RPC_S_SIGNAL] || !tb[RPC_S_PID])
-	{
+	if (!tb[RPC_S_SIGNAL] || !tb[RPC_S_PID]) {
 		errno = EINVAL;
 		return rpc_errno_status();
 	}
@@ -431,8 +415,7 @@ rpc_vuci_process_signal(struct ubus_context *ctx, struct ubus_object *obj,
 	return 0;
 }
 
-static int
-rpc_vuci_init_list(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_init_list(struct ubus_context *ctx, struct ubus_object *obj,
                     struct ubus_request_data *req, const char *method,
                     struct blob_attr *msg)
 {
@@ -450,15 +433,13 @@ rpc_vuci_init_list(struct ubus_context *ctx, struct ubus_object *obj,
 	blob_buf_init(&buf, 0);
 	c = blobmsg_open_array(&buf, "initscripts");
 
-	while ((e = readdir(d)) != NULL)
-	{
+	while ((e = readdir(d)) != NULL) {
 		snprintf(path, sizeof(path) - 1, "/etc/init.d/%s", e->d_name);
 
 		if (stat(path, &s) || !S_ISREG(s.st_mode) || !(s.st_mode & S_IXUSR))
 			continue;
 
-		if ((f = fopen(path, "r")) != NULL)
-		{
+		if ((f = fopen(path, "r")) != NULL) {
 			n = -1;
 			p = fgets(path, sizeof(path) - 1, f);
 
@@ -469,8 +450,7 @@ rpc_vuci_init_list(struct ubus_context *ctx, struct ubus_object *obj,
 
 			blobmsg_add_string(&buf, "name", e->d_name);
 
-			while (fgets(path, sizeof(path) - 1, f))
-			{
+			while (fgets(path, sizeof(path) - 1, f)) {
 				p = strtok(path, "= \t");
 
 				if (!strcmp(p, "START") && !!(p = strtok(NULL, "= \t\n")))
@@ -485,16 +465,13 @@ rpc_vuci_init_list(struct ubus_context *ctx, struct ubus_object *obj,
 				}
 			}
 
-			if (n > -1)
-			{
+			if (n > -1) {
 				snprintf(path, sizeof(path) - 1, "/etc/rc.d/S%02d%s",
 				         n, e->d_name);
 
 				blobmsg_add_u8(&buf, "enabled",
 				               (!stat(path, &s) && (s.st_mode & S_IXUSR)));
-			}
-			else
-			{
+			} else {
 				blobmsg_add_u8(&buf, "enabled", 0);
 			}
 
@@ -512,8 +489,7 @@ skip:
 	return 0;
 }
 
-static int
-rpc_vuci_init_action(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_init_action(struct ubus_context *ctx, struct ubus_object *obj,
                       struct ubus_request_data *req, const char *method,
                       struct blob_attr *msg)
 {
@@ -546,16 +522,14 @@ rpc_vuci_init_action(struct ubus_context *ctx, struct ubus_object *obj,
 	if (!(s.st_mode & S_IXUSR))
 		return UBUS_STATUS_PERMISSION_DENIED;
 
-	switch ((pid = fork()))
-	{
+	switch ((pid = fork())) {
 	case -1:
 		return rpc_errno_status();
 
 	case 0:
 		uloop_done();
 
-		if ((fd = open("/dev/null", O_RDWR)) > -1)
-		{
+		if ((fd = open("/dev/null", O_RDWR)) > -1) {
 			dup2(fd, 0);
 			dup2(fd, 1);
 			dup2(fd, 2);
@@ -573,8 +547,7 @@ rpc_vuci_init_action(struct ubus_context *ctx, struct ubus_object *obj,
 	}
 }
 
-static int
-rpc_vuci_rclocal_get(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_rclocal_get(struct ubus_context *ctx, struct ubus_object *obj,
                       struct ubus_request_data *req, const char *method,
                       struct blob_attr *msg)
 {
@@ -594,8 +567,7 @@ rpc_vuci_rclocal_get(struct ubus_context *ctx, struct ubus_object *obj,
 	return 0;
 }
 
-static int
-rpc_vuci_rclocal_set(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_rclocal_set(struct ubus_context *ctx, struct ubus_object *obj,
                       struct ubus_request_data *req, const char *method,
                       struct blob_attr *msg)
 {
@@ -618,8 +590,7 @@ rpc_vuci_rclocal_set(struct ubus_context *ctx, struct ubus_object *obj,
 	return 0;
 }
 
-static int
-rpc_vuci_crontab_get(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_crontab_get(struct ubus_context *ctx, struct ubus_object *obj,
                       struct ubus_request_data *req, const char *method,
                       struct blob_attr *msg)
 {
@@ -639,8 +610,7 @@ rpc_vuci_crontab_get(struct ubus_context *ctx, struct ubus_object *obj,
 	return 0;
 }
 
-static int
-rpc_vuci_crontab_set(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_crontab_set(struct ubus_context *ctx, struct ubus_object *obj,
                       struct ubus_request_data *req, const char *method,
                       struct blob_attr *msg)
 {
@@ -667,8 +637,7 @@ rpc_vuci_crontab_set(struct ubus_context *ctx, struct ubus_object *obj,
 	return 0;
 }
 
-static int
-rpc_vuci_sshkeys_get(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_sshkeys_get(struct ubus_context *ctx, struct ubus_object *obj,
                       struct ubus_request_data *req, const char *method,
                       struct blob_attr *msg)
 {
@@ -682,8 +651,7 @@ rpc_vuci_sshkeys_get(struct ubus_context *ctx, struct ubus_object *obj,
 	blob_buf_init(&buf, 0);
 	c = blobmsg_open_array(&buf, "keys");
 
-	while (fgets(line, sizeof(line) - 1, f))
-	{
+	while (fgets(line, sizeof(line) - 1, f)) {
 		for (p = line + strlen(line) - 1; (p > line) && isspace(*p); p--)
 			*p = 0;
 
@@ -701,8 +669,7 @@ rpc_vuci_sshkeys_get(struct ubus_context *ctx, struct ubus_object *obj,
 	return 0;
 }
 
-static int
-rpc_vuci_sshkeys_set(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_sshkeys_set(struct ubus_context *ctx, struct ubus_object *obj,
                       struct ubus_request_data *req, const char *method,
                       struct blob_attr *msg)
 {
@@ -719,8 +686,7 @@ rpc_vuci_sshkeys_set(struct ubus_context *ctx, struct ubus_object *obj,
 	if (!(f = fopen("/etc/dropbear/authorized_keys", "w")))
 		return rpc_errno_status();
 
-	blobmsg_for_each_attr(cur, tb[RPC_K_KEYS], rem)
-	{
+	blobmsg_for_each_attr(cur, tb[RPC_K_KEYS], rem) {
 		if (blobmsg_type(cur) != BLOBMSG_TYPE_STRING)
 			continue;
 
@@ -732,8 +698,7 @@ rpc_vuci_sshkeys_set(struct ubus_context *ctx, struct ubus_object *obj,
 	return 0;
 }
 
-static int
-rpc_vuci_password_set(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_password_set(struct ubus_context *ctx, struct ubus_object *obj,
                        struct ubus_request_data *req, const char *method,
                        struct blob_attr *msg)
 {
@@ -757,8 +722,7 @@ rpc_vuci_password_set(struct ubus_context *ctx, struct ubus_object *obj,
 	if (pipe(fds))
 		return rpc_errno_status();
 
-	switch ((pid = fork()))
-	{
+	switch ((pid = fork())) {
 	case -1:
 		close(fds[0]);
 		close(fds[1]);
@@ -771,8 +735,7 @@ rpc_vuci_password_set(struct ubus_context *ctx, struct ubus_object *obj,
 		close(fds[0]);
 		close(fds[1]);
 
-		if ((fd = open("/dev/null", O_RDWR)) > -1)
-		{
+		if ((fd = open("/dev/null", O_RDWR)) > -1) {
 			dup2(fd, 1);
 			dup2(fd, 2);
 			close(fd);
@@ -805,8 +768,7 @@ rpc_vuci_password_set(struct ubus_context *ctx, struct ubus_object *obj,
 	}
 }
 
-static int
-rpc_vuci_led_list(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_led_list(struct ubus_context *ctx, struct ubus_object *obj,
                    struct ubus_request_data *req, const char *method,
                    struct blob_attr *msg)
 {
@@ -822,8 +784,7 @@ rpc_vuci_led_list(struct ubus_context *ctx, struct ubus_object *obj,
 	blob_buf_init(&buf, 0);
 	list = blobmsg_open_array(&buf, "leds");
 
-	while ((e = readdir(d)) != NULL)
-	{
+	while ((e = readdir(d)) != NULL) {
 		snprintf(line, sizeof(line) - 1, "/sys/class/leds/%s/trigger",
 		         e->d_name);
 
@@ -834,16 +795,13 @@ rpc_vuci_led_list(struct ubus_context *ctx, struct ubus_object *obj,
 
 		blobmsg_add_string(&buf, "name", e->d_name);
 
-		if (fgets(line, sizeof(line) - 1, f))
-		{
+		if (fgets(line, sizeof(line) - 1, f)) {
 			trigger = blobmsg_open_array(&buf, "triggers");
 
 			for (p = strtok(line, " \n"), active_trigger = NULL;
 			     p != NULL;
-			     p = strtok(NULL, " \n"))
-			{
-				if (*p == '[')
-				{
+			     p = strtok(NULL, " \n")) {
+				if (*p == '[') {
 					*(p + strlen(p) - 1) = 0;
 					*p++ = 0;
 					active_trigger = p;
@@ -863,8 +821,7 @@ rpc_vuci_led_list(struct ubus_context *ctx, struct ubus_object *obj,
 		snprintf(line, sizeof(line) - 1, "/sys/class/leds/%s/brightness",
 		         e->d_name);
 
-		if ((f = fopen(line, "r")) != NULL)
-		{
+		if ((f = fopen(line, "r")) != NULL) {
 			if (fgets(line, sizeof(line) - 1, f))
 				blobmsg_add_u32(&buf, "brightness", atoi(line));
 
@@ -874,8 +831,7 @@ rpc_vuci_led_list(struct ubus_context *ctx, struct ubus_object *obj,
 		snprintf(line, sizeof(line) - 1, "/sys/class/leds/%s/max_brightness",
 		         e->d_name);
 
-		if ((f = fopen(line, "r")) != NULL)
-		{
+		if ((f = fopen(line, "r")) != NULL) {
 			if (fgets(line, sizeof(line) - 1, f))
 				blobmsg_add_u32(&buf, "max_brightness", atoi(line));
 
@@ -893,8 +849,7 @@ rpc_vuci_led_list(struct ubus_context *ctx, struct ubus_object *obj,
 	return 0;
 }
 
-static int
-rpc_vuci_usb_list(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_usb_list(struct ubus_context *ctx, struct ubus_object *obj,
                    struct ubus_request_data *req, const char *method,
                    struct blob_attr *msg)
 {
@@ -921,8 +876,7 @@ rpc_vuci_usb_list(struct ubus_context *ctx, struct ubus_object *obj,
 	blob_buf_init(&buf, 0);
 	list = blobmsg_open_array(&buf, "devices");
 
-	while ((e = readdir(d)) != NULL)
-	{
+	while ((e = readdir(d)) != NULL) {
 		if (e->d_name[0] < '0' || e->d_name[0] > '9')
 			continue;
 
@@ -936,18 +890,15 @@ rpc_vuci_usb_list(struct ubus_context *ctx, struct ubus_object *obj,
 
 		blobmsg_add_string(&buf, "name", e->d_name);
 
-		for (i = 0; i < sizeof(attributes) / sizeof(attributes[0]); i += 3)
-		{
+		for (i = 0; i < sizeof(attributes) / sizeof(attributes[0]); i += 3) {
 			snprintf(line, sizeof(line) - 1,
 					 "/sys/bus/usb/devices/%s/%s", e->d_name, attributes[i]);
 
 			if (!(f = fopen(line, "r")))
 				continue;
 
-			if (fgets(line, sizeof(line) - 1, f))
-			{
-				switch (*attributes[i+2])
-				{
+			if (fgets(line, sizeof(line) - 1, f)) {
+				switch (*attributes[i+2]) {
 				case 'x':
 					blobmsg_add_u32(&buf, attributes[i+1],
 					                strtoul(line, NULL, 16));
@@ -982,8 +933,7 @@ rpc_vuci_usb_list(struct ubus_context *ctx, struct ubus_object *obj,
 	return 0;
 }
 
-static int
-rpc_vuci_upgrade_test(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_upgrade_test(struct ubus_context *ctx, struct ubus_object *obj,
                        struct ubus_request_data *req, const char *method,
                        struct blob_attr *msg)
 {
@@ -991,16 +941,14 @@ rpc_vuci_upgrade_test(struct ubus_context *ctx, struct ubus_object *obj,
 	return ops->exec(cmd, NULL, NULL, NULL, NULL, NULL, ctx, req);
 }
 
-static int
-rpc_vuci_upgrade_start(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_upgrade_start(struct ubus_context *ctx, struct ubus_object *obj,
                         struct ubus_request_data *req, const char *method,
                         struct blob_attr *msg)
 {
 	return 0;
 }
 
-static int
-rpc_vuci_upgrade_clean(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_upgrade_clean(struct ubus_context *ctx, struct ubus_object *obj,
                         struct ubus_request_data *req, const char *method,
                         struct blob_attr *msg)
 {
@@ -1010,8 +958,7 @@ rpc_vuci_upgrade_clean(struct ubus_context *ctx, struct ubus_object *obj,
 	return 0;
 }
 
-static int
-rpc_vuci_backup_restore(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_backup_restore(struct ubus_context *ctx, struct ubus_object *obj,
                          struct ubus_request_data *req, const char *method,
                          struct blob_attr *msg)
 {
@@ -1021,8 +968,7 @@ rpc_vuci_backup_restore(struct ubus_context *ctx, struct ubus_object *obj,
 	return ops->exec(cmd, NULL, NULL, NULL, NULL, NULL, ctx, req);
 }
 
-static int
-rpc_vuci_backup_clean(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_backup_clean(struct ubus_context *ctx, struct ubus_object *obj,
                        struct ubus_request_data *req, const char *method,
                        struct blob_attr *msg)
 {
@@ -1032,8 +978,7 @@ rpc_vuci_backup_clean(struct ubus_context *ctx, struct ubus_object *obj,
 	return 0;
 }
 
-static int
-rpc_vuci_backup_config_get(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_backup_config_get(struct ubus_context *ctx, struct ubus_object *obj,
                             struct ubus_request_data *req, const char *method,
                             struct blob_attr *msg)
 {
@@ -1053,8 +998,7 @@ rpc_vuci_backup_config_get(struct ubus_context *ctx, struct ubus_object *obj,
 	return 0;
 }
 
-static int
-rpc_vuci_backup_config_set(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_backup_config_set(struct ubus_context *ctx, struct ubus_object *obj,
                             struct ubus_request_data *req, const char *method,
                             struct blob_attr *msg)
 {
@@ -1085,8 +1029,7 @@ struct backup_state {
 	void *array;
 };
 
-static int
-backup_parse_list(struct blob_buf *blob, char *buf, int len, void *priv)
+static int backup_parse_list(struct blob_buf *blob, char *buf, int len, void *priv)
 {
 	struct backup_state *s = priv;
 	char *nl = strchr(buf, '\n');
@@ -1106,8 +1049,7 @@ backup_parse_list(struct blob_buf *blob, char *buf, int len, void *priv)
 	return (nl - buf + 1);
 }
 
-static int
-backup_finish_list(struct blob_buf *blob, int status, void *priv)
+static int backup_finish_list(struct blob_buf *blob, int status, void *priv)
 {
 	struct backup_state *s = priv;
 
@@ -1119,8 +1061,7 @@ backup_finish_list(struct blob_buf *blob, int status, void *priv)
 	return UBUS_STATUS_OK;
 }
 
-static int
-rpc_vuci_backup_list(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_backup_list(struct ubus_context *ctx, struct ubus_object *obj,
                       struct ubus_request_data *req, const char *method,
                       struct blob_attr *msg)
 {
@@ -1138,8 +1079,7 @@ rpc_vuci_backup_list(struct ubus_context *ctx, struct ubus_object *obj,
 	                 state, ctx, req);
 }
 
-static int
-rpc_vuci_reset_test(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_reset_test(struct ubus_context *ctx, struct ubus_object *obj,
                      struct ubus_request_data *req, const char *method,
                      struct blob_attr *msg)
 {
@@ -1148,14 +1088,10 @@ rpc_vuci_reset_test(struct ubus_context *ctx, struct ubus_object *obj,
 	char line[64] = { 0 };
 	bool supported = false;
 
-	if (!stat("/sbin/mtd", &s) && (s.st_mode & S_IXUSR))
-	{
-		if ((mtd = fopen("/proc/mtd", "r")) != NULL)
-		{
-			while (fgets(line, sizeof(line) - 1, mtd))
-			{
-				if (strstr(line, "\"rootfs_data\""))
-				{
+	if (!stat("/sbin/mtd", &s) && (s.st_mode & S_IXUSR)) {
+		if ((mtd = fopen("/proc/mtd", "r")) != NULL) {
+			while (fgets(line, sizeof(line) - 1, mtd)) {
+				if (strstr(line, "\"rootfs_data\"")) {
 					supported = true;
 					break;
 				}
@@ -1173,13 +1109,11 @@ rpc_vuci_reset_test(struct ubus_context *ctx, struct ubus_object *obj,
 	return 0;
 }
 
-static int
-rpc_vuci_reset_start(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_reset_start(struct ubus_context *ctx, struct ubus_object *obj,
                       struct ubus_request_data *req, const char *method,
                       struct blob_attr *msg)
 {
-	switch (fork())
-	{
+	switch (fork()) {
 	case -1:
 		return rpc_errno_status();
 
@@ -1203,13 +1137,11 @@ rpc_vuci_reset_start(struct ubus_context *ctx, struct ubus_object *obj,
 	}
 }
 
-static int
-rpc_vuci_reboot(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_reboot(struct ubus_context *ctx, struct ubus_object *obj,
                  struct ubus_request_data *req, const char *method,
                  struct blob_attr *msg)
 {
-	switch (fork())
-	{
+	switch (fork()) {
 	case -1:
 		return rpc_errno_status();
 
@@ -1232,8 +1164,7 @@ rpc_vuci_reboot(struct ubus_context *ctx, struct ubus_object *obj,
 }
 
 
-static FILE *
-dnsmasq_leasefile(void)
+static FILE *dnsmasq_leasefile(void)
 {
 	FILE *leases = NULL;
 	struct uci_package *p;
@@ -1250,8 +1181,7 @@ dnsmasq_leasefile(void)
 	if (!p)
 		return NULL;
 
-	uci_foreach_element(&p->sections, e)
-	{
+	uci_foreach_element(&p->sections, e) {
 		s = uci_to_section(e);
 
 		if (strcmp(s->type, "dnsmasq"))
@@ -1270,8 +1200,7 @@ dnsmasq_leasefile(void)
 	return leases;
 }
 
-static int
-rpc_vuci_network_leases(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_network_leases(struct ubus_context *ctx, struct ubus_object *obj,
                          struct ubus_request_data *req, const char *method,
                          struct blob_attr *msg)
 {
@@ -1289,8 +1218,7 @@ rpc_vuci_network_leases(struct ubus_context *ctx, struct ubus_object *obj,
 	if (!leases)
 		goto out;
 
-	while (fgets(line, sizeof(line) - 1, leases))
-	{
+	while (fgets(line, sizeof(line) - 1, leases)) {
 		ts   = strtok(line, " \t");
 		mac  = strtok(NULL, " \t");
 		addr = strtok(NULL, " \t");
@@ -1323,8 +1251,7 @@ out:
 	return 0;
 }
 
-static int
-rpc_vuci_network_leases6(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_network_leases6(struct ubus_context *ctx, struct ubus_object *obj,
                           struct ubus_request_data *req, const char *method,
                           struct blob_attr *msg)
 {
@@ -1339,10 +1266,8 @@ rpc_vuci_network_leases6(struct ubus_context *ctx, struct ubus_object *obj,
 
 	leases = fopen("/tmp/hosts/6relayd", "r");
 
-	if (leases)
-	{
-		while (fgets(line, sizeof(line) - 1, leases))
-		{
+	if (leases) {
+		while (fgets(line, sizeof(line) - 1, leases)) {
 			if (strncmp(line, "# ", 2))
 				continue;
 
@@ -1376,16 +1301,13 @@ rpc_vuci_network_leases6(struct ubus_context *ctx, struct ubus_object *obj,
 		}
 
 		fclose(leases);
-	}
-	else
-	{
+	} else {
 		leases = dnsmasq_leasefile();
 
 		if (!leases)
 			goto out;
 
-		while (fgets(line, sizeof(line) - 1, leases))
-		{
+		while (fgets(line, sizeof(line) - 1, leases)) {
 			ts   = strtok(line, " \t");
 			mac  = strtok(NULL, " \t");
 			addr = strtok(NULL, " \t");
@@ -1423,8 +1345,7 @@ out:
 	return 0;
 }
 
-static int
-rpc_vuci_network_ct_count(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_network_ct_count(struct ubus_context *ctx, struct ubus_object *obj,
                            struct ubus_request_data *req, const char *method,
                            struct blob_attr *msg)
 {
@@ -1433,16 +1354,14 @@ rpc_vuci_network_ct_count(struct ubus_context *ctx, struct ubus_object *obj,
 
 	blob_buf_init(&buf, 0);
 
-	if ((f = fopen("/proc/sys/net/netfilter/nf_conntrack_count", "r")) != NULL)
-	{
+	if ((f = fopen("/proc/sys/net/netfilter/nf_conntrack_count", "r")) != NULL) {
 		if (fgets(line, sizeof(line) - 1, f))
 			blobmsg_add_u32(&buf, "count", atoi(line));
 
 		fclose(f);
 	}
 
-	if ((f = fopen("/proc/sys/net/netfilter/nf_conntrack_max", "r")) != NULL)
-	{
+	if ((f = fopen("/proc/sys/net/netfilter/nf_conntrack_max", "r")) != NULL) {
 		if (fgets(line, sizeof(line) - 1, f))
 			blobmsg_add_u32(&buf, "limit", atoi(line));
 
@@ -1454,8 +1373,7 @@ rpc_vuci_network_ct_count(struct ubus_context *ctx, struct ubus_object *obj,
 	return 0;
 }
 
-static int
-rpc_vuci_network_ct_table(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_network_ct_table(struct ubus_context *ctx, struct ubus_object *obj,
                            struct ubus_request_data *req, const char *method,
                            struct blob_attr *msg)
 {
@@ -1468,55 +1386,40 @@ rpc_vuci_network_ct_table(struct ubus_context *ctx, struct ubus_object *obj,
 	blob_buf_init(&buf, 0);
 	c = blobmsg_open_array(&buf, "entries");
 
-	if ((f = fopen("/proc/net/nf_conntrack", "r")) != NULL)
-	{
-		while (fgets(line, sizeof(line) - 1, f))
-		{
+	if ((f = fopen("/proc/net/nf_conntrack", "r")) != NULL) {
+		while (fgets(line, sizeof(line) - 1, f)) {
 			d = blobmsg_open_table(&buf, NULL);
 			memset(seen, 0, sizeof(seen));
 
-			for (i = 0, p = strtok(line, " "); p; i++, p = strtok(NULL, " "))
-			{
+			for (i = 0, p = strtok(line, " "); p; i++, p = strtok(NULL, " ")) {
 				if (i == 0)
 					blobmsg_add_u8(&buf, "ipv6", !strcmp(p, "ipv6"));
 				else if (i == 3)
 					blobmsg_add_u32(&buf, "protocol", atoi(p));
 				else if (i == 4)
 					blobmsg_add_u32(&buf, "expires", atoi(p));
-				else if (i >= 5)
-				{
+				else if (i >= 5) {
 					if (*p == '[')
 						continue;
 
-					if (!seen[0] && !strncmp(p, "src=", 4))
-					{
+					if (!seen[0] && !strncmp(p, "src=", 4)) {
 						blobmsg_add_string(&buf, "src", p + 4);
 						seen[0] = true;
-					}
-					else if (!seen[1] && !strncmp(p, "dst=", 4))
-					{
+					} else if (!seen[1] && !strncmp(p, "dst=", 4)) {
 						blobmsg_add_string(&buf, "dest", p + 4);
 						seen[1] = true;
-					}
-					else if (!seen[2] && !strncmp(p, "sport=", 6))
-					{
+					} else if (!seen[2] && !strncmp(p, "sport=", 6)) {
 						blobmsg_add_u32(&buf, "sport", atoi(p + 6));
 						seen[2] = true;
-					}
-					else if (!seen[3] && !strncmp(p, "dport=", 6))
-					{
+					} else if (!seen[3] && !strncmp(p, "dport=", 6)) {
 						blobmsg_add_u32(&buf, "dport", atoi(p + 6));
 						seen[3] = true;
-					}
-					else if (!strncmp(p, "packets=", 8))
-					{
+					} else if (!strncmp(p, "packets=", 8)) {
 						blobmsg_add_u32(&buf,
 						                seen[4] ? "tx_packets" : "rx_packets",
 						                atoi(p + 8));
 						seen[4] = true;
-					}
-					else if (!strncmp(p, "bytes=", 6))
-					{
+					} else if (!strncmp(p, "bytes=", 6)) {
 						blobmsg_add_u32(&buf,
 										seen[5] ? "tx_bytes" : "rx_bytes",
 						                atoi(p + 6));
@@ -1537,8 +1440,7 @@ rpc_vuci_network_ct_table(struct ubus_context *ctx, struct ubus_object *obj,
 	return 0;
 }
 
-static int
-rpc_vuci_network_arp_table(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_network_arp_table(struct ubus_context *ctx, struct ubus_object *obj,
                             struct ubus_request_data *req, const char *method,
                             struct blob_attr *msg)
 {
@@ -1549,13 +1451,11 @@ rpc_vuci_network_arp_table(struct ubus_context *ctx, struct ubus_object *obj,
 	blob_buf_init(&buf, 0);
 	c = blobmsg_open_array(&buf, "entries");
 
-	if ((f = fopen("/proc/net/arp", "r")) != NULL)
-	{
+	if ((f = fopen("/proc/net/arp", "r")) != NULL) {
 		/* skip header line */
 		fgets(line, sizeof(line) - 1, f);
 
-		while (fgets(line, sizeof(line) - 1, f))
-		{
+		while (fgets(line, sizeof(line) - 1, f)) {
 			addr = strtok(line, " \t");
 
 			strtok(NULL, " \t"); /* HW type */
@@ -1586,8 +1486,7 @@ rpc_vuci_network_arp_table(struct ubus_context *ctx, struct ubus_object *obj,
 	return 0;
 }
 
-static void
-put_hexaddr(const char *name, const char *s, const char *m)
+static void put_hexaddr(const char *name, const char *s, const char *m)
 {
 	int bits;
 	struct in_addr a;
@@ -1596,8 +1495,7 @@ put_hexaddr(const char *name, const char *s, const char *m)
 	a.s_addr = strtoul(s, NULL, 16);
 	inet_ntop(AF_INET, &a, as, sizeof(as));
 
-	if (m)
-	{
+	if (m) {
 		for (a.s_addr = ntohl(strtoul(m, NULL, 16)), bits = 0;
 		     a.s_addr & 0x80000000;
 		     a.s_addr <<= 1)
@@ -1609,8 +1507,7 @@ put_hexaddr(const char *name, const char *s, const char *m)
 	blobmsg_add_string(&buf, name, as);
 }
 
-static int
-rpc_vuci_network_routes(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_network_routes(struct ubus_context *ctx, struct ubus_object *obj,
                          struct ubus_request_data *req, const char *method,
                          struct blob_attr *msg)
 {
@@ -1629,8 +1526,7 @@ rpc_vuci_network_routes(struct ubus_context *ctx, struct ubus_object *obj,
 	/* skip header line */
 	fgets(line, sizeof(line) - 1, routes);
 
-	while (fgets(line, sizeof(line) - 1, routes))
-	{
+	while (fgets(line, sizeof(line) - 1, routes)) {
 		device = strtok(line, "\t ");
 		dst    = strtok(NULL, "\t ");
 		next   = strtok(NULL, "\t ");
@@ -1665,8 +1561,7 @@ rpc_vuci_network_routes(struct ubus_context *ctx, struct ubus_object *obj,
 	return 0;
 }
 
-static void
-put_hex6addr(const char *name, const char *s, const char *m)
+static void put_hex6addr(const char *name, const char *s, const char *m)
 {
 	int i;
 	struct in6_addr a;
@@ -1688,8 +1583,7 @@ put_hex6addr(const char *name, const char *s, const char *m)
 	blobmsg_add_string(&buf, name, as);
 }
 
-static int
-rpc_vuci_network_routes6(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_network_routes6(struct ubus_context *ctx, struct ubus_object *obj,
                           struct ubus_request_data *req, const char *method,
                           struct blob_attr *msg)
 {
@@ -1705,8 +1599,7 @@ rpc_vuci_network_routes6(struct ubus_context *ctx, struct ubus_object *obj,
 	blob_buf_init(&buf, 0);
 	c = blobmsg_open_array(&buf, "routes");
 
-	while (fgets(line, sizeof(line) - 1, routes))
-	{
+	while (fgets(line, sizeof(line) - 1, routes)) {
 		dst    = strtok(line, " ");
 		dmask  = strtok(NULL, " ");
 		src    = strtok(NULL, " ");
@@ -1758,8 +1651,7 @@ struct swconfig_state {
 	int port;
 };
 
-static int
-swconfig_parse_list(struct blob_buf *blob, char *buf, int len, void *priv)
+static int swconfig_parse_list(struct blob_buf *blob, char *buf, int len, void *priv)
 {
 	char *p;
 	char *nl = strchr(buf, '\n');
@@ -1768,8 +1660,7 @@ swconfig_parse_list(struct blob_buf *blob, char *buf, int len, void *priv)
 	if (!nl)
 		return 0;
 
-	if (!s->open)
-	{
+	if (!s->open) {
 		s->open = true;
 		s->array = blobmsg_open_array(blob, "switches");
 	}
@@ -1783,8 +1674,7 @@ swconfig_parse_list(struct blob_buf *blob, char *buf, int len, void *priv)
 	return (nl - buf + 1);
 }
 
-static int
-swconfig_finish_list(struct blob_buf *blob, int status, void *priv)
+static int swconfig_finish_list(struct blob_buf *blob, int status, void *priv)
 {
 	struct swconfig_state *s = priv;
 
@@ -1796,8 +1686,7 @@ swconfig_finish_list(struct blob_buf *blob, int status, void *priv)
 	return UBUS_STATUS_OK;
 }
 
-static int
-rpc_vuci_network_sw_list(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_network_sw_list(struct ubus_context *ctx, struct ubus_object *obj,
                           struct ubus_request_data *req, const char *method,
                           struct blob_attr *msg)
 {
@@ -1816,8 +1705,7 @@ rpc_vuci_network_sw_list(struct ubus_context *ctx, struct ubus_object *obj,
 }
 
 
-static int
-swconfig_parse_help(struct blob_buf *blob, char *buf, int len, void *priv)
+static int swconfig_parse_help(struct blob_buf *blob, char *buf, int len, void *priv)
 {
 	void *c;
 	char *p;
@@ -1827,20 +1715,17 @@ swconfig_parse_help(struct blob_buf *blob, char *buf, int len, void *priv)
 	if (!nl)
 		return 0;
 
-	if (!s->open)
-	{
+	if (!s->open) {
 		s->open = true;
 		s->array = blobmsg_open_table(blob, "info");
 	}
 
-	switch (*buf)
-	{
+	switch (*buf) {
 	case ' ':
 		strtok(buf, "-");
 		p = strtok(NULL, "-\n");
 
-		if (p)
-		{
+		if (p) {
 			if (s->open2)
 				blobmsg_close_array(blob, s->array2);
 
@@ -1904,8 +1789,7 @@ swconfig_parse_help(struct blob_buf *blob, char *buf, int len, void *priv)
 	return (nl - buf + 1);
 }
 
-static int
-swconfig_finish_help(struct blob_buf *blob, int status, void *priv)
+static int swconfig_finish_help(struct blob_buf *blob, int status, void *priv)
 {
 	struct swconfig_state *s = priv;
 
@@ -1920,8 +1804,7 @@ swconfig_finish_help(struct blob_buf *blob, int status, void *priv)
 	return UBUS_STATUS_OK;
 }
 
-static int
-rpc_vuci_network_sw_info(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_network_sw_info(struct ubus_context *ctx, struct ubus_object *obj,
                           struct ubus_request_data *req, const char *method,
                           struct blob_attr *msg)
 {
@@ -1949,8 +1832,7 @@ rpc_vuci_network_sw_info(struct ubus_context *ctx, struct ubus_object *obj,
 }
 
 
-static void
-swconfig_parse_link(struct blob_buf *blob, char *val)
+static void swconfig_parse_link(struct blob_buf *blob, char *val)
 {
 	char *p;
 
@@ -1962,8 +1844,7 @@ swconfig_parse_link(struct blob_buf *blob, char *val)
 	bool aneg = false;
 	bool up = false;
 
-	for (p = strtok(val, " "); p; p = strtok(NULL, " "))
-	{
+	for (p = strtok(val, " "); p; p = strtok(NULL, " ")) {
 		if (!strncmp(p, "speed:", 6))
 			speed = atoi(p + 6);
 		else if (!strcmp(p, "link:up"))
@@ -1986,8 +1867,7 @@ swconfig_parse_link(struct blob_buf *blob, char *val)
 	blobmsg_add_u32(blob, "speed",           speed);
 }
 
-static int
-swconfig_parse_stat(struct blob_buf *blob, char *buf, int len, void *priv)
+static int swconfig_parse_stat(struct blob_buf *blob, char *buf, int len, void *priv)
 {
 	char *p, *v;
 	char *nl = strchr(buf, '\n');
@@ -1999,30 +1879,22 @@ swconfig_parse_stat(struct blob_buf *blob, char *buf, int len, void *priv)
 	if (nl == buf)
 		return 1;
 
-	if (!s->open)
-	{
+	if (!s->open) {
 		s->open = true;
 		s->array = blobmsg_open_array(blob, "ports");
 	}
 
 	p = strtok(buf, " :\t");
-
-	if (p)
-	{
-		if (!strcmp(p, "Port"))
-		{
+	if (p) {
+		if (!strcmp(p, "Port")) {
 			if (s->open2)
 				blobmsg_close_table(blob, s->array2);
 
 			s->array2 = blobmsg_open_table(blob, NULL);
 			s->open2 = true;
-		}
-		else if (s->open2)
-		{
+		} else if (s->open2) {
 			v = strtok(NULL, "\n");
-
-			if (v)
-			{
+			if (v) {
 				if (!strcmp(p, "link"))
 					swconfig_parse_link(blob, v);
 			}
@@ -2032,8 +1904,7 @@ swconfig_parse_stat(struct blob_buf *blob, char *buf, int len, void *priv)
 	return (nl - buf + 1);
 }
 
-static int
-swconfig_finish_stat(struct blob_buf *blob, int status, void *priv)
+static int swconfig_finish_stat(struct blob_buf *blob, int status, void *priv)
 {
 	struct swconfig_state *s = priv;
 
@@ -2048,8 +1919,7 @@ swconfig_finish_stat(struct blob_buf *blob, int status, void *priv)
 	return UBUS_STATUS_OK;
 }
 
-static int
-rpc_vuci_network_sw_status(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_network_sw_status(struct ubus_context *ctx, struct ubus_object *obj,
                             struct ubus_request_data *req, const char *method,
                             struct blob_attr *msg)
 {
@@ -2084,8 +1954,7 @@ enum {
 	NETWORK_CMD_NSLOOKUP
 };
 
-static int
-network_cmd(struct ubus_context *ctx, struct ubus_request_data *req,
+static int network_cmd(struct ubus_context *ctx, struct ubus_request_data *req,
             struct blob_attr *msg, int which)
 {
 	char *arg;
@@ -2120,40 +1989,35 @@ network_cmd(struct ubus_context *ctx, struct ubus_request_data *req,
 	return ops->exec(cmds[which], NULL, NULL, NULL, NULL, NULL, ctx, req);
 }
 
-static int
-rpc_vuci_network_ping(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_network_ping(struct ubus_context *ctx, struct ubus_object *obj,
                        struct ubus_request_data *req, const char *method,
                        struct blob_attr *msg)
 {
 	return network_cmd(ctx, req, msg, NETWORK_CMD_PING);
 }
 
-static int
-rpc_vuci_network_ping6(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_network_ping6(struct ubus_context *ctx, struct ubus_object *obj,
                         struct ubus_request_data *req, const char *method,
                         struct blob_attr *msg)
 {
 	return network_cmd(ctx, req, msg, NETWORK_CMD_PING6);
 }
 
-static int
-rpc_vuci_network_traceroute(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_network_traceroute(struct ubus_context *ctx, struct ubus_object *obj,
                              struct ubus_request_data *req, const char *method,
                              struct blob_attr *msg)
 {
 	return network_cmd(ctx, req, msg, NETWORK_CMD_TRACEROUTE);
 }
 
-static int
-rpc_vuci_network_traceroute6(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_network_traceroute6(struct ubus_context *ctx, struct ubus_object *obj,
                               struct ubus_request_data *req, const char *method,
                               struct blob_attr *msg)
 {
 	return network_cmd(ctx, req, msg, NETWORK_CMD_TRACEROUTE6);
 }
 
-static int
-rpc_vuci_network_nslookup(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_network_nslookup(struct ubus_context *ctx, struct ubus_object *obj,
                            struct ubus_request_data *req, const char *method,
                            struct blob_attr *msg)
 {
@@ -2161,8 +2025,7 @@ rpc_vuci_network_nslookup(struct ubus_context *ctx, struct ubus_object *obj,
 }
 
 
-static int
-network_ifupdown(struct ubus_context *ctx, struct ubus_request_data *req,
+static int network_ifupdown(struct ubus_context *ctx, struct ubus_request_data *req,
                  struct blob_attr *msg, bool up)
 {
 	const char *cmd[3] = { NULL };
@@ -2180,24 +2043,21 @@ network_ifupdown(struct ubus_context *ctx, struct ubus_request_data *req,
 	return ops->exec(cmd, NULL, NULL, NULL, NULL, NULL, ctx, req);
 }
 
-static int
-rpc_vuci_network_ifup(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_network_ifup(struct ubus_context *ctx, struct ubus_object *obj,
                        struct ubus_request_data *req, const char *method,
                        struct blob_attr *msg)
 {
 	return network_ifupdown(ctx, req, msg, true);
 }
 
-static int
-rpc_vuci_network_ifdown(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_network_ifdown(struct ubus_context *ctx, struct ubus_object *obj,
                          struct ubus_request_data *req, const char *method,
                          struct blob_attr *msg)
 {
 	return network_ifupdown(ctx, req, msg, false);
 }
 
-static int
-rpc_vuci_network_dev_list(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_network_dev_list(struct ubus_context *ctx, struct ubus_object *obj,
                            struct ubus_request_data *req, const char *method,
                            struct blob_attr *msg)
 {
@@ -2216,8 +2076,7 @@ rpc_vuci_network_dev_list(struct ubus_context *ctx, struct ubus_object *obj,
 	blob_buf_init(&buf, 0);
 	c = blobmsg_open_array(&buf, "devices");
 
-	while ((e = readdir(d)) != NULL)
-	{
+	while ((e = readdir(d)) != NULL) {
 		snprintf(path, sizeof(path) - 1, "/sys/class/net/%s/type", e->d_name);
 
 		if (stat(path, &s) || !S_ISREG(s.st_mode) || !(f = fopen(path, "r")))
@@ -2284,8 +2143,7 @@ rpc_vuci_network_dev_list(struct ubus_context *ctx, struct ubus_object *obj,
 	return 0;
 }
 
-static int
-rpc_vuci_network_eap_support(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_network_eap_support(struct ubus_context *ctx, struct ubus_object *obj,
                               struct ubus_request_data *req, const char *method,
                               struct blob_attr *msg)
 {
@@ -2309,8 +2167,7 @@ struct opkg_state {
 	char prev_name[64];
 };
 
-static int
-opkg_parse_list(struct blob_buf *blob, char *buf, int len, void *priv)
+static int opkg_parse_list(struct blob_buf *blob, char *buf, int len, void *priv)
 {
 	struct opkg_state *s = priv;
 
@@ -2330,32 +2187,24 @@ opkg_parse_list(struct blob_buf *blob, char *buf, int len, void *priv)
 	if (s->cur_count >= s->req_count)
 		goto skip;
 
-	if (!s->open[0])
-	{
+	if (!s->open[0]) {
 		s->open[0]  = true;
 		s->array[0] = blobmsg_open_array(blob, "packages");
 	}
 
-	for (ptr = buf, last = buf, *nl = 0; ptr <= nl; ptr++)
-	{
-		if (!*ptr || (*ptr == ' ' && *(ptr+1) == '-' && *(ptr+2) == ' '))
-		{
-			if (!name)
-			{
+	for (ptr = buf, last = buf, *nl = 0; ptr <= nl; ptr++) {
+		if (!*ptr || (*ptr == ' ' && *(ptr+1) == '-' && *(ptr+2) == ' ')) {
+			if (!name) {
 				name = last;
 				last = ptr + 3;
 				*ptr = 0;
 				ptr += 2;
-			}
-			else if (!vers)
-			{
+			} else if (!vers) {
 				vers = last;
 				last = ptr + 3;
 				*ptr = 0;
 				ptr += 2;
-			}
-			else if (!size)
-			{
+			} else if (!size) {
 				size = strtoul(last, NULL, 10);
 				desc = *ptr ? (ptr + 3) : NULL;
 				*ptr = 0;
@@ -2364,15 +2213,13 @@ opkg_parse_list(struct blob_buf *blob, char *buf, int len, void *priv)
 		}
 	}
 
-	if (name && vers)
-	{
+	if (name && vers) {
 		/* opkg may spit out duplicate package lines, one for the installed pkg
 		 * and the other for the repo entry. The repo info is usually more
 		 * complete (contains size + description, therfore merge it with the
 		 * previous entry)
 		 */
-		if (!strcmp(s->prev_name, name))
-		{
+		if (!strcmp(s->prev_name, name)) {
 			if (s->missing > 1 && size > 0) {
 				blobmsg_add_u32(blob, NULL, size);
 
@@ -2381,9 +2228,7 @@ opkg_parse_list(struct blob_buf *blob, char *buf, int len, void *priv)
 			}
 
 			s->missing = 0;
-		}
-		else
-		{
+		} else {
 			if (s->open[1])
 				blobmsg_close_array(blob, s->array[1]);
 
@@ -2413,8 +2258,7 @@ skip:
 	return (nl - buf + 1);
 }
 
-static int
-opkg_finish_list(struct blob_buf *blob, int status, void *priv)
+static int opkg_finish_list(struct blob_buf *blob, int status, void *priv)
 {
 	struct opkg_state *s = priv;
 
@@ -2430,8 +2274,7 @@ opkg_finish_list(struct blob_buf *blob, int status, void *priv)
 	return UBUS_STATUS_OK;
 }
 
-static int
-opkg_exec_list(const char *action, struct blob_attr *msg,
+static int opkg_exec_list(const char *action, struct blob_attr *msg,
                struct ubus_context *ctx, struct ubus_request_data *req)
 {
 	struct opkg_state *state = NULL;
@@ -2468,32 +2311,28 @@ opkg_exec_list(const char *action, struct blob_attr *msg,
 }
 
 
-static int
-rpc_vuci_opkg_list(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_opkg_list(struct ubus_context *ctx, struct ubus_object *obj,
                     struct ubus_request_data *req, const char *method,
                     struct blob_attr *msg)
 {
 	return opkg_exec_list("list", msg, ctx, req);
 }
 
-static int
-rpc_vuci_opkg_list_installed(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_opkg_list_installed(struct ubus_context *ctx, struct ubus_object *obj,
                               struct ubus_request_data *req, const char *method,
                               struct blob_attr *msg)
 {
 	return opkg_exec_list("list-installed", msg, ctx, req);
 }
 
-static int
-rpc_vuci_opkg_find(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_opkg_find(struct ubus_context *ctx, struct ubus_object *obj,
                     struct ubus_request_data *req, const char *method,
                     struct blob_attr *msg)
 {
 	return opkg_exec_list("find", msg, ctx, req);
 }
 
-static int
-rpc_vuci_opkg_update(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_opkg_update(struct ubus_context *ctx, struct ubus_object *obj,
                       struct ubus_request_data *req, const char *method,
                       struct blob_attr *msg)
 {
@@ -2501,8 +2340,7 @@ rpc_vuci_opkg_update(struct ubus_context *ctx, struct ubus_object *obj,
 	return ops->exec(cmd, NULL, NULL, NULL, NULL, NULL, ctx, req);
 }
 
-static int
-rpc_vuci_opkg_install(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_opkg_install(struct ubus_context *ctx, struct ubus_object *obj,
                        struct ubus_request_data *req, const char *method,
                        struct blob_attr *msg)
 {
@@ -2521,8 +2359,7 @@ rpc_vuci_opkg_install(struct ubus_context *ctx, struct ubus_object *obj,
 	return ops->exec(cmd, NULL, NULL, NULL, NULL, NULL, ctx, req);
 }
 
-static int
-rpc_vuci_opkg_remove(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_opkg_remove(struct ubus_context *ctx, struct ubus_object *obj,
                       struct ubus_request_data *req, const char *method,
                       struct blob_attr *msg)
 {
@@ -2542,8 +2379,7 @@ rpc_vuci_opkg_remove(struct ubus_context *ctx, struct ubus_object *obj,
 }
 
 
-static int
-opkg_parse_info(struct blob_buf *blob, char *buf, int len, void *priv)
+static int opkg_parse_info(struct blob_buf *blob, char *buf, int len, void *priv)
 {
 	struct blob_attr *cur;
 	char *ptr, *key, *val;
@@ -2557,14 +2393,12 @@ opkg_parse_info(struct blob_buf *blob, char *buf, int len, void *priv)
 	key = strtok(buf, ":\n");
 	val = strtok(NULL, "\n");
 
-	if (key && val)
-	{
+	if (key && val) {
 		while (isspace(*val))
 			val++;
 
 		/* convert field name to lowercase and replace dashes with underscore */
-		for (ptr = key; *ptr; ptr++)
-		{
+		for (ptr = key; *ptr; ptr++) {
 			if (*ptr >= 65 && *ptr <= 90)
 				*ptr += 32;
 			else if (*ptr == '-')
@@ -2577,8 +2411,7 @@ opkg_parse_info(struct blob_buf *blob, char *buf, int len, void *priv)
 			if (!strcmp(blobmsg_name(cur), key))
 				goto skip;
 
-		if (!strcmp(key, "depends"))
-		{
+		if (!strcmp(key, "depends")) {
 			c = blobmsg_open_array(blob, key);
 
 			for (ptr = strtok(val, ","); ptr; ptr = strtok(NULL, ","))
@@ -2590,25 +2423,19 @@ opkg_parse_info(struct blob_buf *blob, char *buf, int len, void *priv)
 			}
 
 			blobmsg_close_array(blob, c);
-		}
-		else if (!strcmp(key, "status"))
-		{
+		} else if (!strcmp(key, "status")) {
 			c = blobmsg_open_array(blob, key);
 
 			for (ptr = strtok(val, " "); ptr; ptr = strtok(NULL, " "))
 				blobmsg_add_string(blob, NULL, ptr);
 
 			blobmsg_close_array(blob, c);
-		}
-		else if (!strcmp(key, "size") || !strcmp(key, "installed_time"))
-		{
+		} else if (!strcmp(key, "size") || !strcmp(key, "installed_time")) {
 			n = strtoul(val, &ptr, 10);
 
 			if (ptr > val && *ptr == 0)
 				blobmsg_add_u32(blob, key, n);
-		}
-		else
-		{
+		} else {
 			blobmsg_add_string(blob, key, val);
 		}
 	}
@@ -2617,14 +2444,12 @@ skip:
 	return (nl - buf + 1);
 }
 
-static int
-opkg_finish_info(struct blob_buf *blob, int status, void *priv)
+static int opkg_finish_info(struct blob_buf *blob, int status, void *priv)
 {
 	return blob_len(blob->head) ? UBUS_STATUS_OK : UBUS_STATUS_NOT_FOUND;
 }
 
-static int
-rpc_vuci_opkg_info(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_opkg_info(struct ubus_context *ctx, struct ubus_object *obj,
                     struct ubus_request_data *req, const char *method,
                     struct blob_attr *msg)
 {
@@ -2643,8 +2468,7 @@ rpc_vuci_opkg_info(struct ubus_context *ctx, struct ubus_object *obj,
 	                 ctx, req);
 }
 
-static int
-rpc_vuci_opkg_config_get(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_opkg_config_get(struct ubus_context *ctx, struct ubus_object *obj,
                           struct ubus_request_data *req, const char *method,
                           struct blob_attr *msg)
 {
@@ -2664,8 +2488,7 @@ rpc_vuci_opkg_config_get(struct ubus_context *ctx, struct ubus_object *obj,
 	return 0;
 }
 
-static int
-rpc_vuci_opkg_config_set(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_opkg_config_set(struct ubus_context *ctx, struct ubus_object *obj,
                           struct ubus_request_data *req, const char *method,
                           struct blob_attr *msg)
 {
@@ -2692,8 +2515,7 @@ rpc_vuci_opkg_config_set(struct ubus_context *ctx, struct ubus_object *obj,
 }
 
 
-static bool
-menu_access(struct blob_attr *sid, struct blob_attr *acls, struct blob_buf *e)
+static bool menu_access(struct blob_attr *sid, struct blob_attr *acls, struct blob_buf *e)
 {
 	int rem;
 	struct blob_attr *acl;
@@ -2721,8 +2543,7 @@ menu_access(struct blob_attr *sid, struct blob_attr *acls, struct blob_buf *e)
 	return rv;
 }
 
-static bool
-menu_files(struct blob_attr *files)
+static bool menu_files(struct blob_attr *files)
 {
 	int rem;
 	bool empty = true;
@@ -2745,8 +2566,7 @@ menu_files(struct blob_attr *files)
 	return empty;
 }
 
-static int
-rpc_vuci_ui_menu(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_ui_menu(struct ubus_context *ctx, struct ubus_object *obj,
                   struct ubus_request_data *req, const char *method,
                   struct blob_attr *msg)
 {
@@ -2769,24 +2589,20 @@ rpc_vuci_ui_menu(struct ubus_context *ctx, struct ubus_object *obj,
 	blob_buf_init(&buf, 0);
 	c = blobmsg_open_table(&buf, "menu");
 
-	if (!glob(RPC_VUCI_MENU_FILES, 0, NULL, &gl))
-	{
-		for (i = 0; i < gl.gl_pathc; i++)
-		{
+	if (!glob(RPC_VUCI_MENU_FILES, 0, NULL, &gl)) {
+		for (i = 0; i < gl.gl_pathc; i++) {
 			blob_buf_init(&menu, 0);
 
 			if (!blobmsg_add_json_from_file(&menu, gl.gl_pathv[i]))
 				goto skip;
 
-			blob_for_each_attr(entry, menu.head, rem)
-			{
+			blob_for_each_attr(entry, menu.head, rem) {
 				access = files = true;
 
 				blob_buf_init(&item, 0);
 				d = blobmsg_open_table(&item, blobmsg_name(entry));
 
-				blobmsg_for_each_attr(attr, entry, rem2)
-				{
+				blobmsg_for_each_attr(attr, entry, rem2) {
 					if (blob_id(attr) == BLOBMSG_TYPE_ARRAY &&
 					    !strcmp(blobmsg_name(attr), "acls"))
 						access = menu_access(tb[RPC_MENU_SESSION], attr, &item);
@@ -2820,8 +2636,7 @@ skip:
 }
 
 
-static void
-parse_acl_file(struct blob_buf *acls, const char *path)
+static void parse_acl_file(struct blob_buf *acls, const char *path)
 {
 	struct blob_buf acl = { 0 };
 	struct blob_attr *cur;
@@ -2843,8 +2658,7 @@ parse_acl_file(struct blob_buf *acls, const char *path)
 	blob_buf_free(&acl);
 }
 
-static int
-rpc_vuci_ui_acls(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_ui_acls(struct ubus_context *ctx, struct ubus_object *obj,
                   struct ubus_request_data *req, const char *method,
                   struct blob_attr *msg)
 {
@@ -2868,8 +2682,7 @@ rpc_vuci_ui_acls(struct ubus_context *ctx, struct ubus_object *obj,
 	return 0;
 }
 
-static int
-rpc_vuci_ui_crypt(struct ubus_context *ctx, struct ubus_object *obj,
+static int rpc_vuci_ui_crypt(struct ubus_context *ctx, struct ubus_object *obj,
                    struct ubus_request_data *req, const char *method,
                    struct blob_attr *msg)
 {
@@ -2892,8 +2705,7 @@ rpc_vuci_ui_crypt(struct ubus_context *ctx, struct ubus_object *obj,
 }
 
 
-static int
-rpc_vuci_api_init(const struct rpc_daemon_ops *o, struct ubus_context *ctx)
+static int rpc_vuci_api_init(const struct rpc_daemon_ops *o, struct ubus_context *ctx)
 {
 	int rv = 0;
 
