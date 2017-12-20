@@ -36,9 +36,20 @@ define Build/Prepare
 endef
 
 define Package/vuci-ui-base/install
-	$(INSTALL_DIR) $(1)/www $(1)/usr
+	$(INSTALL_DIR) $(1)/www
 	$(CP) $(PKG_BUILD_DIR)/dist/* $(1)/www/
-	$(CP) ./files/share $(1)/usr/
+	$(CP) ./files/* $(1)/
+endef
+
+define Package/vuci-ui-base/postinst
+#!/bin/sh
+uci batch <<-EOF
+	set uhttpd.main.ubus_prefix="/ubus"
+	set uhttpd.main.index_page='vuci.html'
+	commit uhttpd
+EOF
+/etc/init.d/uhttpd restart &
+exit 0
 endef
 
 $(eval $(call BuildPackage,vuci-ui-base))
