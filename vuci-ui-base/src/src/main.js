@@ -4,6 +4,7 @@ import router from './router'
 import ubus from './plugins/ubus'
 import {Card, Form, FormItem, Input, Icon, Button, Row, Col, Menu, Submenu, MenuItem} from 'iview';
 import 'iview/dist/styles/iview.css'
+import store from './store'
 
 Vue.config.productionTip = false
 
@@ -33,30 +34,10 @@ router.beforeEach((to, from, next) => {
 	}
 });
 
-let menus = JSON.parse(sessionStorage.getItem('menus'));
-if (menus) {
-	let routes = [{
-        path: '/',
-        component: resolve => require(['@/pages/home.vue'], resolve),
-        children: []
-    },
-    {
-        path: '*',
-        redirect: '/404'
-    }];
-
-    menus.forEach(function(m) {
-        var r = {path: m.path, component: resolve => require([`@/pages/${m.component}.vue`], resolve)}
-        routes[0].children.push(r);
-    });
-
-
-	router.addRoutes(routes);
-}
-
 /* eslint-disable no-new */
 new Vue({
 	el: '#app',
+	store,
 	router,
 	render: (h)=>h(App)
 });

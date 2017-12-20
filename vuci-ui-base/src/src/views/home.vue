@@ -74,25 +74,20 @@
 <script>
 
 export default {
-    name: 'Home',
-    data() {
-        return {
-            menus: []
-        };
+    computed: {
+        menus: function() {
+            return this.$store.state.menus;
+        }
     },
 
     methods: {
         changeMenu (name) {
-            console.log('changeMenu ' + name);
             this.$router.push(name);
         }
     },
 
-    beforeMount() {
-        this.$ubus.fetch_menus(this).then((r) => {
-            console.log(JSON.stringify(r));
-            this.menus = r.childs;
-        });
+    mounted: function() {
+        this.$router.push('/status/overview');
     }
 }
 

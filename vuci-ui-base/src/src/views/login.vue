@@ -44,31 +44,36 @@
                     if (valid) {
                         v.$ubus.login(this.form.username, this.form.password).then((r) => {
                             if (r) {
-                                let menus = [
-                                    {path: '/status/overview', component: 'status-overview'},
-                                    {path: '/status/routes', component: 'status-routes'}
-                                ];
+                                v.$ubus.fetch_menus(this).then((r) => {
+                                    let menus = r.childs;
+                                    v.$store.commit('addMenus', menus);
 
-                                let routes = [{
-                                    path: '/',
-                                    component: resolve => require(['@/pages/home.vue'], resolve),
-                                    children: []
-                                },
-                                {
-                                    path: '*',
-                                    redirect: '/404'
-                                }];
+                                    let routes = [{
+                                        path: '/',
+                                        component: resolve => require(['@/views/home.vue'], resolve),
+                                        children: []
+                                    },
+                                    {
+                                        path: '*',
+                                        redirect: '/404'
+                                    }];
 
-                                menus.forEach(function(m) {
-                                    var r = {path: m.path, component: resolve => require([`@/pages/${m.component}.vue`], resolve)}
-                                    routes[0].children.push(r);
+                                    menus.forEach(function(m) {
+                                        if (m.childs) {
+                                            m.childs.forEach(function(item) {
+                                                var r = {
+                                                    path: item.path,
+                                                    component: resolve => require([`@/views/${item.view.replace('/', '.')}.vue`], resolve)
+                                                };
+                                                routes[0].children.push(r);
+                                            });
+                                        }
+                                    });
+
+                                    sessionStorage.setItem("menus", JSON.stringify(menus));
+                                    v.$router.addRoutes(routes);
+                                    v.$router.push('/');
                                 });
-
-                                v.$router.addRoutes(routes);
-
-                                sessionStorage.setItem("menus", JSON.stringify(menus));
-
-                                v.$router.push('/');
                             }
                         }, () => {
                             console.log('Login Fail!');
