@@ -17,6 +17,9 @@ const state = {
 const mutations = {
     addMenus (state, menus) {
         state.menus  = menus;
+    },
+    setLogged (state) {
+        state.logged  = true;
     }
 }
 
@@ -25,11 +28,41 @@ const mutations = {
 const actions = {
 }
 
+// getters are functions
+const getters = {
+    isLogged: state => state.logged,
+	getMenus: state => state.menus,
+	getRoutes: state => {
+        let routes = [{
+            path: '/',
+            component: resolve => require(['@/views/home.vue'], resolve),
+            children: []
+        },
+        {
+            path: '*',
+            redirect: '/404'
+        }];
+
+        state.menus.forEach(function(m) {
+            if (m.childs) {
+                m.childs.forEach(function(item) {
+                    var r = {
+                        path: item.path,
+                        component: resolve => require([`@/views/${item.view.replace('/', '.')}.vue`], resolve)
+                    };
+                    routes[0].children.push(r);
+                });
+            }
+        });
+        return routes;
+    }
+}
 // A Vuex instance is created by combining the state, mutations, actions,
 // and getters.
 export default new Vuex.Store({
     state,
     actions,
     mutations,
+    getters,
     plugins: [createPersistedState()]
 })

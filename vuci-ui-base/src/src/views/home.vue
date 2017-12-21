@@ -65,11 +65,14 @@
 
 <script>
 
+import { mapGetters } from 'vuex'
+
 export default {
     computed: {
-        menus: function() {
-            return this.$store.state.menus;
-        }
+        ...mapGetters({
+            menus: 'getMenus',
+            routes: 'getRoutes'
+        })
     },
 
     methods: {

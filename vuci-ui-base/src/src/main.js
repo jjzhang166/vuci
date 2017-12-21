@@ -25,6 +25,8 @@ Vue.component('Submenu', Submenu);
 Vue.component('MenuItem', MenuItem);
 
 router.beforeEach((to, from, next) => {
+	console.log(`to:${to.path}  from:${from.path}`);
+
 	if (to.path == '/login') {
 		sessionStorage.removeItem('session');
 	}
@@ -36,10 +38,25 @@ router.beforeEach((to, from, next) => {
 	}
 });
 
+
+import { mapGetters } from 'vuex'
+
 /* eslint-disable no-new */
 new Vue({
 	el: '#app',
 	store,
 	router,
-	render: (h)=>h(App)
+	render: (h)=>h(App),
+	computed: {
+        ...mapGetters({
+            menus: 'getMenus',
+            routes: 'getRoutes',
+            logged: 'isLogged'
+        })
+    },
+	mounted: function() {
+		if (this.menus && this.logged) {
+			this.$router.addRoutes(this.routes);
+		}
+	}
 });
