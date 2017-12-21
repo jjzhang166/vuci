@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import ubus from './plugins/ubus'
-import {Card, Form, FormItem, Input, Icon, Button, Row, Col, Menu, Submenu, MenuItem} from 'iview';
+import {Layout, Sider, Card, Form, FormItem, Input, Icon, Button, Row, Col, Menu, Submenu, MenuItem} from 'iview';
 import 'iview/dist/styles/iview.css'
 import store from './store'
 
@@ -10,6 +10,8 @@ Vue.config.productionTip = false
 
 Vue.use(ubus);
 
+Vue.component('Layout', Layout);
+Vue.component('Sider', Sider);
 Vue.component('Card', Card);
 Vue.component('Form', Form);
 Vue.component('FormItem', FormItem);
