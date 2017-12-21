@@ -1,8 +1,8 @@
 <template>
     <Layout style="height: 100%">
-         <Sider style="overflow: scroll; height: 100%">
-            <div style="color: #fff; margin: 15px">OpenWrt</div>
-            <Menu theme="dark" width="auto" @on-select="changeMenu">
+         <Sider   style="overflow: scroll; height: 100%">
+            <div class="host">OpenWrt</div>
+            <Menu theme="dark" width="auto" @on-select="changeMenu" style="margin-top: 30px">
                 <Submenu v-for="menu in menus" :name="menu.path" :key="menu.path">
                     <template slot="title">{{menu.title}}</template>
                     <MenuItem v-for="item in menu.childs" :name="item.path" :key="item.path">{{item.title}}</MenuItem>
@@ -23,6 +23,19 @@
 </template>
 
 <style scoped>
+    .host {
+        background: #000;
+        color: #fff;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 183px;
+        height: 40px;
+        padding-left: 20px;
+        padding-top: 10px;
+        z-index: 10000;
+    }
+
     .layout-header {
         height: 60px;
         margin: 15px;
