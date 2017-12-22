@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import ubus from './plugins/ubus'
-import {Layout, Sider, Card, Form, FormItem, Input, Icon, Button, Row, Col, Menu, Submenu, MenuItem} from 'iview';
+import {Layout, Sider, Card, Form, FormItem, Input, Icon, Button, Row, Col, Menu, Submenu, MenuItem, Table} from 'iview';
 import 'iview/dist/styles/iview.css'
 import store from './store'
 
@@ -23,6 +23,7 @@ Vue.component('Col', Col);
 Vue.component('Menu', Menu);
 Vue.component('Submenu', Submenu);
 Vue.component('MenuItem', MenuItem);
+Vue.component('Table', Table);
 
 router.beforeEach((to, from, next) => {
 	console.log(`to:${to.path}  from:${from.path}`);
