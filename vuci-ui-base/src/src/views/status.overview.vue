@@ -25,17 +25,16 @@
         },
 
         mounted: function() {
-               	this.$ubus.call('system', 'board', {}).then((r) => {
-                this.data.push({name: 'hostname', value: r.hostname});
-                this.data.push({name: 'model', value: r.model});
-                this.data.push({name: 'kernel', value: r.kernel});
-                this.data.push({name: 'description', value: r.release.description});
-        	});
-
-        	this.$ubus.call('system', 'info', {}).then((r) => {
-                this.data.push({name: 'localtime', value: (new Date(r.localtime * 1000)).toUTCString()});
-                this.data.push({name: 'uptime', value: r.uptime});
-        	});
+            this.$system.getInfo().then((r) => {
+                this.data = [
+                    {name: 'hostname', value: r.hostname},
+                    {name: 'model', value: r.model},
+                    {name: 'kernel', value: r.kernel},
+                    {name: 'description', value: r.release.description},
+                    {name: 'localtime', value: r.localtime},
+                    {name: 'uptime', value: r.uptime},
+                ]
+            });
         }
     }
 </script>

@@ -15,75 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import axios from 'axios'
-
-let _jsonrpc_id = 1;
-let _ubus_rpc_session = '00000000000000000000000000000000';
-let _requests = [];
-
-function _call_cb(msg) {
-	/* fetch related request info */
-	let req = _requests[msg.id];
-	if (typeof(req) != 'object')
-		throw 'No related request for JSON response';
-
-	let ret;
-	/* verify message frame */
-	if (typeof(msg) == 'object' && msg.jsonrpc == '2.0') {
-		if (Array.isArray(msg.result) && msg.result[0] == 0)
-			ret = (msg.result.length > 1) ? msg.result[1] : msg.result[0];
-	}
-
-	/* delete request object */
-	delete _requests[msg.id];
-
-	return new Promise(function(resolve, reject) {
-		resolve(ret);
-	});
-}
-
-function call(object, method, params) {
-	console.log('ubus call:' + object + ' ' + method + ' ' + JSON.stringify(params));
-
-	if (sessionStorage.getItem('session'))
-		_ubus_rpc_session = sessionStorage.getItem('session');
-
-	/* store request info */
-	let req = _requests[_jsonrpc_id] = { };
-
-	/* build message object */
-	let msg = {
-		jsonrpc: '2.0',
-		id:      _jsonrpc_id++,
-		method:  'call',
-		params:  [
-			_ubus_rpc_session,
-			object,
-			method,
-			params
-		]
-	};
-
-	return axios.post('/ubus', msg).then((r) => {
-		return _call_cb(r.data);
-	}).catch((r) => {
-		return _call_cb(r.data);
-	});
-}
-
-function login(username, password) {
-	return new Promise(function(resolve, reject) {
-		call('session', 'login', {username, password}).then((r) => {
-
-			console.log('login:' + JSON.stringify(r));
-			if (r && r.ubus_rpc_session) {
-				_ubus_rpc_session = r.ubus_rpc_session;
-				sessionStorage.setItem("session", _ubus_rpc_session);
-				resolve(true);
-			}
-		});
-	});
-}
+import * as ubus from './ubus.js'
 
 /**
  * Returns a new transforms menu definition from the flat path like object returned by ubus vuci.ui to a tree like structure
@@ -148,19 +80,23 @@ function _toChildArray(node) {
     return node;
 }
 
-function fetch_menus(v) {
-	return new Promise(function(resolve, reject) {
-		call('vuci.ui', 'menu', {}).then((r) => {
+const menu = {}
 
-			console.log('fetch_menus:' + JSON.stringify(r));
+menu.install  = function (Vue, options) {
+	if (menu.installed)
+		return;
 
-			if (r && r.menu) {
-				resolve(_toChildArray(_toChildTree(r.menu)));
-			} else {
-				v.$router.push('/login');
-			}
+	Vue.prototype.$loadMenu = function(username, password) {
+		return new Promise(function(resolve, reject) {
+			ubus.call('vuci.ui', 'menu', {}).then((r) => {
+				if (r && r.menu) {
+					resolve(_toChildArray(_toChildTree(r.menu)));
+				}
+			});
 		});
-	});
+	}
+
+	menu.installed = true;
 }
 
-export {call, login, fetch_menus}
+export default menu

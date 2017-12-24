@@ -50,15 +50,14 @@
             ...mapMutations(['addMenus', 'setLogged']),
 
             handleSubmit() {
-                var v = this;
                 this.$refs['form'].validate((valid) => {
                     if (valid) {
-                        v.$ubus.login(this.form.username, this.form.password).then((r) => {
+                        this.$login(this.form.username, this.form.password).then((r) => {
                             if (r) {
-                                this.$ubus.fetch_menus(this).then((r) => {
+                                this.$loadMenu(this).then((r) => {
                                     this.addMenus(r.childs);
                                     this.setLogged();
-                                    this.$router.addRoutes(v.routes);
+                                    this.$router.addRoutes(this.routes);
                                     this.$router.push('/');
                                 });
                             }
