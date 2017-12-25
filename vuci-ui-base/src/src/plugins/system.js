@@ -21,12 +21,10 @@ export function getInfo() {
 	return new Promise(function(resolve, reject) {
 		let req = [{
 			object: 'system',
-			method: 'info',
-			params: {}
+			method: 'info'
 		}, {
 			object: 'system',
-			method: 'board',
-			params: {}
+			method: 'board'
 		}];
 		ubus.call_batch(req).then((r) => {
 			if (r)

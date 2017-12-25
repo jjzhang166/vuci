@@ -67,7 +67,7 @@ export function call(object, method, params) {
 			_ubus_rpc_session,
 			object,
 			method,
-			params
+			params || {}
 		]
 	};
 
@@ -103,7 +103,7 @@ export function call_batch(batchs) {
 				_ubus_rpc_session,
 				b.object,
 				b.method,
-				b.params
+				b.params || {}
 			]
 		};
 		
