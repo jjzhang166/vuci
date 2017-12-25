@@ -30,8 +30,6 @@ Vue.component('MenuItem', MenuItem);
 Vue.component('Table', Table);
 
 router.beforeEach((to, from, next) => {
-	console.log(`to:${to.path}  from:${from.path}`);
-
 	if (to.path == '/login') {
 		sessionStorage.removeItem('_ubus_rpc_session');
 	}

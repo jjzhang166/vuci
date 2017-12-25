@@ -26,9 +26,9 @@ login.install  = function (Vue, options) {
 	Vue.prototype.$login = function(username, password) {
 		return new Promise(function(resolve, reject) {
 			ubus.call('session', 'login', {username, password}).then((r) => {
-				if (r && r.ubus_rpc_session) {
-					sessionStorage.setItem("_ubus_rpc_session", r.ubus_rpc_session);
-					resolve(r);
+				if (r && r[0] && r[0].ubus_rpc_session) {
+					sessionStorage.setItem("_ubus_rpc_session", r[0].ubus_rpc_session);
+					resolve(r[0]);
 				}
 			});
 		});

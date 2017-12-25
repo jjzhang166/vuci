@@ -18,23 +18,19 @@
 import * as ubus from './ubus.js'
 
 export function getInfo() {
-	let p1 = new Promise(function(resolve, reject) {
-		ubus.call('system', 'info', {}).then((r) => {
-			if (r)
-				resolve(r);
-		});
-	});
-
-	let p2 = new Promise(function(resolve, reject) {
-		ubus.call('system', 'board', {}).then((r) => {
-			if (r)
-				resolve(r);
-		});
-	});
-
 	return new Promise(function(resolve, reject) {
-		Promise.all([p1, p2]).then(function(r) {
-			resolve(Object.assign({}, r[0], r[1]))
+		let req = [{
+			object: 'system',
+			method: 'info',
+			params: {}
+		}, {
+			object: 'system',
+			method: 'board',
+			params: {}
+		}];
+		ubus.call_batch(req).then((r) => {
+			if (r)
+				resolve(Object.assign({}, r[0], r[1]))
 		});
 	});
 }

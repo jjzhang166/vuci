@@ -20,24 +20,31 @@ import axios from 'axios'
 let _jsonrpc_id = 1;
 let _requests = [];
 
-function _call_cb(msg) {
-	/* fetch related request info */
-	let req = _requests[msg.id];
-	if (typeof(req) != 'object')
-		throw 'No related request for JSON response';
+function _call_cb(msgs) {
 
-	let ret;
-	/* verify message frame */
-	if (typeof(msg) == 'object' && msg.jsonrpc == '2.0') {
-		if (Array.isArray(msg.result) && msg.result[0] == 0)
-			ret = (msg.result.length > 1) ? msg.result[1] : msg.result[0];
+	if (!Array.isArray(msgs)) {
+		msgs = [ msgs ];
 	}
 
-	/* delete request object */
-	delete _requests[msg.id];
+	let data = [ ];
+
+	msgs.forEach((msg) => {
+		if (typeof(_requests[msg.id]) != 'object')
+			throw 'No related request for JSON response';
+		delete _requests[msg.id];
+
+		let ret;
+		/* verify message frame */
+		if (typeof(msg) == 'object' && msg.jsonrpc == '2.0') {
+			if (Array.isArray(msg.result) && msg.result[0] == 0)
+				ret = (msg.result.length > 1) ? msg.result[1] : msg.result[0];
+		}
+
+		data.push(ret);
+	});
 
 	return new Promise(function(resolve, reject) {
-		resolve(ret);
+		resolve(data);
 	});
 }
 
@@ -45,7 +52,7 @@ export function call(object, method, params) {
 	console.log('ubus call:' + object + ' ' + method + ' ' + JSON.stringify(params));
 
 	/* store request info */
-	let req = _requests[_jsonrpc_id] = { };
+	_requests[_jsonrpc_id] = {};
 	let _ubus_rpc_session = sessionStorage.getItem('_ubus_rpc_session');
 
 	if (_ubus_rpc_session == 'undefined' || _ubus_rpc_session == null)
@@ -71,6 +78,45 @@ export function call(object, method, params) {
 	});
 }
 
+export function call_batch(batchs) {
+	if (!Array.isArray(batchs))
+		throw 'The parameter must be an array';
+
+	let _ubus_rpc_session = sessionStorage.getItem('_ubus_rpc_session');
+	if (_ubus_rpc_session == 'undefined' || _ubus_rpc_session == null)
+		_ubus_rpc_session = '00000000000000000000000000000000';
+
+	let reqs = [];
+
+	let msgs = [];
+
+	batchs.forEach((b) => {
+		/* store request info */
+		_requests[_jsonrpc_id] = {};
+		
+		/* build message object */
+		let msg = {
+			jsonrpc: '2.0',
+			id:      _jsonrpc_id++,
+			method:  'call',
+			params:  [
+				_ubus_rpc_session,
+				b.object,
+				b.method,
+				b.params
+			]
+		};
+		
+		msgs.push(msg);
+	});
+
+	return axios.post('/ubus', msgs).then((r) => {
+		return _call_cb(r.data);
+	}).catch((r) => {
+		return _call_cb(r.data);
+	});
+}
+
 const ubus = {}
 
 ubus.install  = function (Vue, options) {
@@ -78,7 +124,8 @@ ubus.install  = function (Vue, options) {
 		return;
 
 	Vue.prototype.$ubus = {
-		call: call
+		call: call,
+		call_batch: call_batch
 	}
 
 	ubus.installed = true;
