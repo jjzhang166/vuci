@@ -50,8 +50,17 @@ function _call_cb(msgs, resolve, reject) {
 		delete _requests[msg.id];
 
 		let result = msg.result;
-		if (!result || !Array.isArray(result) || result.length < 1)
+		if (!result || !Array.isArray(result) || result.length < 1) {
+
+			/* Access denied */
+			if (msg.error && msg.error.code == -32002) {
+				sessionStorage.removeItem('_ubus_rpc_session');
+				reject(msg.error);
+				return;
+			}
+
 			throw `ubus call error: ${JSON.stringify(msg.error) || 'unknown'}`
+		}
 
 		if (result[0] == 0) {
 			data.push((result.length > 1) ? result[1] : result[0]);
