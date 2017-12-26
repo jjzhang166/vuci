@@ -49,7 +49,7 @@
                         title: ' ',
                         key: 'value',
                         render: (h, params) => {
-                            return h(Progress, {props: {percent: parseFloat(params.row.value), 'stroke-width': '15'}});
+                            return h(Progress, {props: {percent: parseFloat(params.row.value), 'stroke-width': 15}});
                         }
                     }
                 ],
