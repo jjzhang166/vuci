@@ -20,30 +20,47 @@ import axios from 'axios'
 let _jsonrpc_id = 1;
 let _requests = [];
 
+let ubus_msg_status = {
+	[0]: 'Success',
+	[1]: 'Invalid command',
+	[2]: 'Invalid argument',
+	[3]: 'Method not found',
+	[4]: 'Not found',
+	[5]: 'No response',
+	[6]: 'Permission denied',
+	[7]: 'Request timed out',
+	[8]: 'Operation not supported',
+	[9]: 'Unknown error',
+	[10]: 'Connection failed'
+}
+
 function _call_cb(msgs) {
-
-	if (!Array.isArray(msgs)) {
-		msgs = [ msgs ];
-	}
-
-	let data = [ ];
-
-	msgs.forEach((msg) => {
-		if (typeof(_requests[msg.id]) != 'object')
-			throw 'No related request for JSON response';
-		delete _requests[msg.id];
-
-		let ret;
-		/* verify message frame */
-		if (typeof(msg) == 'object' && msg.jsonrpc == '2.0') {
-			if (Array.isArray(msg.result) && msg.result[0] == 0)
-				ret = (msg.result.length > 1) ? msg.result[1] : msg.result[0];
-		}
-
-		data.push(ret);
-	});
-
 	return new Promise(function(resolve, reject) {
+		if (!Array.isArray(msgs))
+			msgs = [ msgs ];
+
+		let data = [ ];
+
+		msgs.forEach((msg) => {
+			if (typeof(msg) != 'object' || msg.jsonrpc != '2.0')
+				throw 'ubus call error: Invalid msg';
+
+			if (typeof(_requests[msg.id]) != 'object')
+				throw 'No related request for JSON response';
+			delete _requests[msg.id];
+
+			let result = msg.result;
+			if (!result || !Array.isArray(result) || result.length < 1)
+				throw `ubus call error: ${JSON.stringify(msg.error) || 'unknown'}`
+
+			let ret;
+
+			if (result[0] == 0)
+				data.push((result.length > 1) ? result[1] : result[0]);
+			else
+				throw JSON.stringify({code: result[0], message: ubus_msg_status[result[0]] || ''});
+		});
+
 		resolve(data);
 	});
 }
@@ -75,8 +92,6 @@ function _call(batchs) {
 	});
 
 	return axios.post('/ubus', msgs).then((r) => {
-		return _call_cb(r.data);
-	}).catch((r) => {
 		return _call_cb(r.data);
 	});
 }
