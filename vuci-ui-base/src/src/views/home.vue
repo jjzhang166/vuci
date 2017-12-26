@@ -10,9 +10,17 @@
         </Sider>
         <Layout>
             <Header class="layout-header">
-                <Button @click="toggleCollapse" :style="{background: 'transparent', border: 'none', transform: 'rotateZ(' + (this.shrink ? '-90' : '0') + 'deg)'}">
-                    <Icon type="navicon" size="32"></Icon>
-                </Button>
+                <Row type="flex">
+                     <Col span="1">
+                         <Button @click="toggleCollapse" :style="{background: 'transparent', border: 'none', transform: 'rotateZ(' + (this.shrink ? '-90' : '0') + 'deg)'}">
+                            <Icon type="navicon" size="32"></Icon>
+                        </Button>
+                    </Col>
+                    <Col span="22"></Col>
+                    <Col span="1">
+                        <Button @click="logout">Logout</Button>
+                    </Col>
+                </Row>
             </Header>
             <Content class="layout-content">
                 <router-view></router-view>
@@ -75,6 +83,9 @@ export default {
         toggleCollapse () {
             this.shrink = !this.shrink;
             this.$refs.side.toggleCollapse();
+        },
+        logout() {
+            this.$router.push('/login');
         }
     },
 
