@@ -56,7 +56,7 @@
                             if (r[0].ubus_rpc_session) {
                                 sessionStorage.setItem("_ubus_rpc_session", r[0].ubus_rpc_session);
 
-                                this.$loadMenu(this).then((r) => {
+                                this.$loadMenu().then((r) => {
                                     this.addMenus(r.childs);
                                     this.setLogged();
                                     this.$router.addRoutes(this.routes);

@@ -86,10 +86,10 @@ menu.install  = function (Vue, options) {
 	if (menu.installed)
 		return;
 
-	Vue.prototype.$loadMenu = function(username, password) {
+	Vue.prototype.$loadMenu = function() {
 		return new Promise(function(resolve, reject) {
 			ubus.call('vuci.ui', 'menu').then((r) => {
-				if (r && r[0] && r[0].menu) {
+				if (r[0].menu) {
 					resolve(_toChildArray(_toChildTree(r[0].menu)));
 				}
 			});
