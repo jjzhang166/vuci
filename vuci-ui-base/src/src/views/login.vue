@@ -14,7 +14,7 @@
                     </Input>
                 </FormItem>
                 <FormItem>
-                    <Button type="primary" style="width:100%;" size="large" icon="log-in" @click="handleSubmit">Login</Button>
+                    <Button type="primary" long size="large" icon="log-in" @click="handleSubmit">Login</Button>
                 </FormItem>
             </Form>
         </Card>

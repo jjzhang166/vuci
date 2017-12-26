@@ -1,7 +1,6 @@
 <template>
     <Layout style="height: 100%">
-         <Sider   style="overflow: scroll; height: 100%">
-            <div class="host">{{hostname}}</div>
+         <Sider ref="side" style="overflow: scroll; height: 100%" collapsible hide-trigger collapsed-width="0" >
             <Menu theme="dark" width="auto" @on-select="changeMenu" style="margin-top: 30px">
                 <Submenu v-for="menu in menus" :name="menu.path" :key="menu.path">
                     <template slot="title">{{menu.title}}</template>
@@ -11,7 +10,9 @@
         </Sider>
         <Layout>
             <Header class="layout-header">
-                <div>Header</div>
+                <Button @click="toggleCollapse" :style="{background: 'transparent', border: 'none', transform: 'rotateZ(' + (this.shrink ? '-90' : '0') + 'deg)'}">
+                    <Icon type="navicon" size="32"></Icon>
+                </Button>
             </Header>
             <Content class="layout-content">
                 <router-view></router-view>
@@ -23,19 +24,6 @@
 </template>
 
 <style scoped>
-    .host {
-        background: #000;
-        color: #fff;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 183px;
-        height: 40px;
-        padding-left: 20px;
-        padding-top: 10px;
-        z-index: 10000;
-    }
-
     .layout-header {
         height: 60px;
         margin: 15px;
@@ -70,7 +58,7 @@ import { mapGetters } from 'vuex'
 export default {
     data() {
         return {
-            hostname: ''
+            shrink: false
         }
     },
     computed: {
@@ -83,13 +71,14 @@ export default {
     methods: {
         changeMenu (name) {
             this.$router.push(name);
+        },
+        toggleCollapse () {
+            this.shrink = !this.shrink;
+            this.$refs.side.toggleCollapse();
         }
     },
 
     mounted: function() {
-        this.$system.getInfo().then((r) => {
-            this.hostname = r.hostname;
-        });
         this.$router.push('/status/overview');
     }
 }
