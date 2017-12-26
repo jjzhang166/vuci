@@ -16,7 +16,10 @@
                             <Icon type="navicon" size="32"></Icon>
                         </Button>
                     </Col>
-                    <Col span="22"></Col>
+                    <Col span="21"></Col>
+                    <Col span="1">
+                        <Button @click="reboot">Reboot</Button>
+                    </Col>
                     <Col span="1">
                         <Button @click="logout">Logout</Button>
                     </Col>
@@ -27,6 +30,13 @@
             </Content>
             <Footer class="layout-copy">2017 &copy; Jianhui Zhao</Footer>
         </Layout>
+        <Modal v-model="modal_reboot" title="Reboot" @on-ok="doReboot" :closable="false" :mask-closable="false">
+            <p>Are you sure you want to restart your equipment?</p>
+            <Spin fix :style="{display: this.loading}">
+                <Icon type="load-a" size="40" style="animation: ani-demo-spin 1s linear infinite;"></Icon>
+                <div>Loading</div>
+            </Spin>
+        </Modal>
     </Layout>
 </template>
 
@@ -60,12 +70,15 @@
 
 <script>
 
+import axios from 'axios'
 import { mapGetters } from 'vuex'
 
 export default {
     data() {
         return {
-            shrink: false
+            shrink: false,
+            modal_reboot: false,
+            loading: 'none'
         }
     },
     computed: {
@@ -85,6 +98,24 @@ export default {
         },
         logout() {
             this.$router.push('/login');
+        },
+        reboot() {
+            this.modal_reboot = true;
+        },
+        doReboot() {
+            this.$ubus.call('rpc-sys', 'reboot').then((r) => {
+                this.loading = 'block';
+                this.modal_reboot = true;
+
+                window.setTimeout(() => {
+                    let interval = window.setInterval(() => {
+                        axios.get('/').then((r) => {
+                            window.clearInterval(interval);
+                            window.location.href = '/';
+                        });
+                    }, 5000);
+                }, 5000);
+            });
         }
     },
 
