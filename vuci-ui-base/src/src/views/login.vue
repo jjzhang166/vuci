@@ -52,8 +52,10 @@
             handleSubmit() {
                 this.$refs['form'].validate((valid) => {
                     if (valid) {
-                        this.$login(this.form.username, this.form.password).then((r) => {
-                            if (r) {
+                        this.$ubus.call('session', 'login', {username: this.form.username, password: this.form.password}).then((r) => {
+                            if (r[0].ubus_rpc_session) {
+                                sessionStorage.setItem("_ubus_rpc_session", r[0].ubus_rpc_session);
+
                                 this.$loadMenu(this).then((r) => {
                                     this.addMenus(r.childs);
                                     this.setLogged();
@@ -61,8 +63,8 @@
                                     this.$router.push('/');
                                 });
                             }
-                        }, () => {
-                            console.log('Login Fail!');
+                        }).catch((r) => {
+                            console.log('Login Fail! ' + JSON.stringify(r));
                         });
                     } else {
                         console.log('Login Fail!');

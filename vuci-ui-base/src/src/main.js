@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import login from './plugins/login.js'
+import ubus from './plugins/ubus.js'
 import menu from './plugins/menu.js'
 import system from './plugins/system.js'
 import {Layout, Sider, Card, Form, FormItem, Input, Icon, Button, Row, Col, Menu, Submenu, MenuItem, Table} from 'iview';
@@ -10,7 +10,7 @@ import store from './store'
 
 Vue.config.productionTip = false
 
-Vue.use(login);
+Vue.use(ubus);
 Vue.use(menu);
 Vue.use(system);
 
@@ -30,15 +30,13 @@ Vue.component('MenuItem', MenuItem);
 Vue.component('Table', Table);
 
 router.beforeEach((to, from, next) => {
-	if (to.path == '/login') {
+	if (to.path == '/login')
 		sessionStorage.removeItem('_ubus_rpc_session');
-	}
 
-	if (!sessionStorage.getItem('_ubus_rpc_session') && to.path != '/login') {
+	if (!sessionStorage.getItem('_ubus_rpc_session') && to.path != '/login')
 		next('/login')
-	} else {
+	else
 		next()
-	}
 });
 
 

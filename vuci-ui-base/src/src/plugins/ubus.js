@@ -34,35 +34,40 @@ let ubus_msg_status = {
 	[10]: 'Connection failed'
 }
 
-function _call_cb(msgs) {
-	return new Promise(function(resolve, reject) {
-		if (!Array.isArray(msgs))
-			msgs = [ msgs ];
+function _call_cb(msgs, resolve, reject) {
+	if (!Array.isArray(msgs))
+		msgs = [ msgs ];
 
-		let data = [ ];
+	let data = [ ];
 
-		msgs.forEach((msg) => {
-			if (typeof(msg) != 'object' || msg.jsonrpc != '2.0')
-				throw 'ubus call error: Invalid msg';
+	for (let i = 0; i < msgs.length; i++) {
+		let msg = msgs[i];
+		if (typeof(msg) != 'object' || msg.jsonrpc != '2.0')
+			throw 'ubus call error: Invalid msg';
 
-			if (typeof(_requests[msg.id]) != 'object')
-				throw 'No related request for JSON response';
-			delete _requests[msg.id];
+		if (typeof(_requests[msg.id]) != 'object')
+			throw 'No related request for JSON response';
+		delete _requests[msg.id];
 
-			let result = msg.result;
-			if (!result || !Array.isArray(result) || result.length < 1)
-				throw `ubus call error: ${JSON.stringify(msg.error) || 'unknown'}`
+		let result = msg.result;
+		if (!result || !Array.isArray(result) || result.length < 1)
+			throw `ubus call error: ${JSON.stringify(msg.error) || 'unknown'}`
 
-			let ret;
+		if (result[0] == 0) {
+			data.push((result.length > 1) ? result[1] : result[0]);
+		} else {
+			let error = {code: result[0], message: ubus_msg_status[result[0]] || ''};
+			if (result[0] == 6) {
+				sessionStorage.removeItem('_ubus_rpc_session');
+				reject(error);
+			} else {
+				throw `ubus call error: ${JSON.stringify(error)}`
+			}
+			return;
+		}
+	}
 
-			if (result[0] == 0)
-				data.push((result.length > 1) ? result[1] : result[0]);
-			else
-				throw JSON.stringify({code: result[0], message: ubus_msg_status[result[0]] || ''});
-		});
-
-		resolve(data);
-	});
+	resolve(data);
 }
 
 function _call(batchs) {
@@ -91,8 +96,10 @@ function _call(batchs) {
 		msgs.push(msg);
 	});
 
-	return axios.post('/ubus', msgs).then((r) => {
-		return _call_cb(r.data);
+	return new Promise(function(resolve, reject) {
+		axios.post('/ubus', msgs).then((r) => {
+			_call_cb(r.data, resolve, reject);
+		});
 	});
 }
 
