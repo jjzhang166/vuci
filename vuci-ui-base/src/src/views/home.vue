@@ -30,15 +30,80 @@
             </Content>
             <Footer class="layout-copy">2017 &copy; Jianhui Zhao</Footer>
         </Layout>
-        <Modal v-model="modal_reboot" title="Reboot" @on-ok="doReboot" :closable="false" :mask-closable="false">
-            <p>Are you sure you want to restart your equipment?</p>
-            <Spin fix :style="{display: this.loading}">
-                <Icon type="load-a" size="40" style="animation: ani-demo-spin 1s linear infinite;"></Icon>
-                <div>Loading</div>
-            </Spin>
-        </Modal>
     </Layout>
 </template>
+
+<script>
+
+import axios from 'axios'
+import modal from '../../node_modules/iview/src/components/modal'
+import { mapGetters } from 'vuex'
+
+export default {
+    data() {
+        return {
+            shrink: false
+        }
+    },
+    computed: {
+        ...mapGetters({
+            menus: 'getMenus',
+            routes: 'getRoutes'
+        })
+    },
+
+    methods: {
+        changeMenu (name) {
+            this.$router.push(name);
+        },
+        toggleCollapse () {
+            this.shrink = !this.shrink;
+            this.$refs.side.toggleCollapse();
+        },
+        logout() {
+            this.$router.push('/login');
+        },
+        reboot() {
+            modal.confirm({
+                title: 'Reboot',
+                content: '<p>Are you sure you want to restart your device?</p>',
+                onOk: () => {
+                    this.$ubus.call('rpc-sys', 'reboot').then((r) => {
+                        window.setTimeout(() => {
+                            let interval = window.setInterval(() => {
+                                axios.get('/').then((r) => {
+                                    window.clearInterval(interval);
+                                    window.location.href = '/';
+                                });
+                            }, 5000);
+                        }, 5000);
+                    });
+
+                    window.setTimeout(() => {
+                        modal.confirm({
+                            title: 'Reboot',
+                            render: (h) => {
+                                return h('Icon', {
+                                    props: {
+                                        type: 'load-a',
+                                        size: '40',
+                                        class: 'loading'
+                                    }
+                                });
+                            }
+                        });
+                    }, 500);
+                }
+            });
+        }
+    },
+
+    mounted: function() {
+        this.$router.push('/status/overview');
+    }
+}
+
+</script>
 
 <style scoped>
     .layout-header {
@@ -66,62 +131,8 @@
         border-radius: 4px;
         padding: 10px;
     }
-</style>
 
-<script>
-
-import axios from 'axios'
-import { mapGetters } from 'vuex'
-
-export default {
-    data() {
-        return {
-            shrink: false,
-            modal_reboot: false,
-            loading: 'none'
-        }
-    },
-    computed: {
-        ...mapGetters({
-            menus: 'getMenus',
-            routes: 'getRoutes'
-        })
-    },
-
-    methods: {
-        changeMenu (name) {
-            this.$router.push(name);
-        },
-        toggleCollapse () {
-            this.shrink = !this.shrink;
-            this.$refs.side.toggleCollapse();
-        },
-        logout() {
-            this.$router.push('/login');
-        },
-        reboot() {
-            this.modal_reboot = true;
-        },
-        doReboot() {
-            this.$ubus.call('rpc-sys', 'reboot').then((r) => {
-                this.loading = 'block';
-                this.modal_reboot = true;
-
-                window.setTimeout(() => {
-                    let interval = window.setInterval(() => {
-                        axios.get('/').then((r) => {
-                            window.clearInterval(interval);
-                            window.location.href = '/';
-                        });
-                    }, 5000);
-                }, 5000);
-            });
-        }
-    },
-
-    mounted: function() {
-        this.$router.push('/status/overview');
+    .loading {
+        animation: "ani-demo-spin 1s linear infinite";
     }
-}
-
-</script>
+</style>
