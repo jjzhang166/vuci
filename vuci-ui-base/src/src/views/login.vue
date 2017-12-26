@@ -4,17 +4,17 @@
             <p slot="title">Authorization Required</p>
             <Form ref="form" :model="form" :rules="ruleValidate">
                 <FormItem prop="username">
-                    <Input type="text" v-model="form.username" auto-complete="off" placeholder="Enter username...">
+                    <Input type="text" v-model="form.username" size="large" auto-complete="off" placeholder="Enter username...">
                         <Icon type="ios-person-outline" slot="prepend"></Icon>
                     </Input>
                 </FormItem>
                 <FormItem>
-                    <Input type="password" v-model="form.password" auto-complete="off" placeholder="Enter password...">
+                    <Input type="password" v-model="form.password" size="large" auto-complete="off" placeholder="Enter password...">
                         <Icon type="ios-locked-outline" slot="prepend"></Icon>
                     </Input>
                 </FormItem>
                 <FormItem>
-                    <Button type="primary" style="width:100%;" @click="handleSubmit">Login</Button>
+                    <Button type="primary" style="width:100%;" size="large" icon="log-in" @click="handleSubmit">Login</Button>
                 </FormItem>
             </Form>
         </Card>
