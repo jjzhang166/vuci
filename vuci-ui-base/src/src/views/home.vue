@@ -24,7 +24,6 @@
             </Header>
             <Content class="layout-content">
                 <router-view></router-view>
-                </div>
             </Content>
             <Footer class="layout-copy">2017 &copy; Jianhui Zhao</Footer>
         </Layout>
@@ -46,7 +45,7 @@
         background: #fff;
         border-radius: 4px;
         padding: 10px;
-        overflow: hidden;
+        overflow: scroll;
     }
 
     .layout-copy {
