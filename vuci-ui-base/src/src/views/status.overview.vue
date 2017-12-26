@@ -31,8 +31,8 @@
                     {name: 'model', value: r.model},
                     {name: 'kernel', value: r.kernel},
                     {name: 'description', value: r.release.description},
-                    {name: 'localtime', value: r.localtime},
-                    {name: 'uptime', value: r.uptime},
+                    {name: 'localtime', value: (new Date(r.localtime * 1000)).toUTCString()},
+                    {name: 'uptime', value: r.uptime}
                 ]
             });
         }
