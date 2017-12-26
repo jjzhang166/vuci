@@ -48,45 +48,9 @@ function _call_cb(msgs) {
 	});
 }
 
-export function call(object, method, params) {
-	console.log('ubus call:' + object + ' ' + method + ' ' + JSON.stringify(params));
-
-	/* store request info */
-	_requests[_jsonrpc_id] = {};
-	let _ubus_rpc_session = sessionStorage.getItem('_ubus_rpc_session');
-
-	if (_ubus_rpc_session == 'undefined' || _ubus_rpc_session == null)
-		_ubus_rpc_session = '00000000000000000000000000000000';
-
-	/* build message object */
-	let msg = {
-		jsonrpc: '2.0',
-		id:      _jsonrpc_id++,
-		method:  'call',
-		params:  [
-			_ubus_rpc_session,
-			object,
-			method,
-			params || {}
-		]
-	};
-
-	return axios.post('/ubus', msg).then((r) => {
-		return _call_cb(r.data);
-	}).catch((r) => {
-		return _call_cb(r.data);
-	});
-}
-
-export function call_batch(batchs) {
+function _call(batchs) {
 	if (!Array.isArray(batchs))
 		throw 'The parameter must be an array';
-
-	let _ubus_rpc_session = sessionStorage.getItem('_ubus_rpc_session');
-	if (_ubus_rpc_session == 'undefined' || _ubus_rpc_session == null)
-		_ubus_rpc_session = '00000000000000000000000000000000';
-
-	let reqs = [];
 
 	let msgs = [];
 
@@ -97,10 +61,10 @@ export function call_batch(batchs) {
 		/* build message object */
 		let msg = {
 			jsonrpc: '2.0',
-			id:      _jsonrpc_id++,
-			method:  'call',
-			params:  [
-				_ubus_rpc_session,
+			id: _jsonrpc_id++,
+			method: 'call',
+			params: [
+				sessionStorage.getItem('_ubus_rpc_session') || '00000000000000000000000000000000',
 				b.object,
 				b.method,
 				b.params || {}
@@ -115,6 +79,14 @@ export function call_batch(batchs) {
 	}).catch((r) => {
 		return _call_cb(r.data);
 	});
+}
+
+export function call(object, method, params) {
+	return _call([{object, method, params}]);
+}
+
+export function call_batch(batchs) {
+	return _call(batchs);
 }
 
 const ubus = {}

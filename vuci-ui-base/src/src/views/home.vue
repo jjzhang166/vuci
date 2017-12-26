@@ -1,7 +1,7 @@
 <template>
     <Layout style="height: 100%">
          <Sider   style="overflow: scroll; height: 100%">
-            <div class="host">OpenWrt</div>
+            <div class="host">{{hostname}}</div>
             <Menu theme="dark" width="auto" @on-select="changeMenu" style="margin-top: 30px">
                 <Submenu v-for="menu in menus" :name="menu.path" :key="menu.path">
                     <template slot="title">{{menu.title}}</template>
@@ -68,6 +68,11 @@
 import { mapGetters } from 'vuex'
 
 export default {
+    data() {
+        return {
+            hostname: ''
+        }
+    },
     computed: {
         ...mapGetters({
             menus: 'getMenus',
@@ -82,6 +87,9 @@ export default {
     },
 
     mounted: function() {
+        this.$system.getInfo().then((r) => {
+            this.hostname = r.hostname;
+        });
         this.$router.push('/status/overview');
     }
 }
