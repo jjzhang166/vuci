@@ -4,8 +4,7 @@
 
 VUCI - OpenWrt后台管理框架，基于[vuejs2](https://github.com/vuejs/vue)和[iView](https://github.com/ElemeFE/iview/iview)。
 
-一个全新的Web接口.它不再使用Lua，而是使用MVVM框架。这意味着HTML页面在客户端（浏览器）构建完成，
-通过[ubus](https://wiki.openwrt.org/zh-cn/doc/techref/ubus)存取各种系统数据
+一个全新的Web接口.它不再使用Lua，而是使用MVVM框架。通过[ubus](https://wiki.openwrt.org/zh-cn/doc/techref/ubus)存取各种系统数据
 (通过[uhttpd-mod-ubus](https://wiki.openwrt.org/zh-cn/doc/techref/ubus#通过http访问ubus)提供基于HTTP的接口API)。
 
 `请保持关注以获取最新的项目动态`
