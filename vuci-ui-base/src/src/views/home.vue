@@ -83,13 +83,17 @@ export default {
                         modal.confirm({
                             title: 'Reboot',
                             render: (h) => {
-                                return h('Icon', {
-                                    props: {
-                                        type: 'load-a',
-                                        size: '40',
-                                        class: 'loading'
-                                    }
-                                });
+                                return h('Spin', [
+                                    h('Icon', {
+                                        props: {
+                                            type: 'load-a',
+                                            size: 40,
+                                            class: 'loading',
+                                            style: 'animation: ani-demo-spin 1s linear infinite'
+                                        }
+                                    }),
+                                    h('div', 'Loading')
+                                ]);
                             }
                         });
                     }, 500);
@@ -133,6 +137,6 @@ export default {
     }
 
     .loading {
-        animation: "ani-demo-spin 1s linear infinite";
+        animation: ani-demo-spin 1s linear infinite;
     }
 </style>
